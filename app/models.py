@@ -78,3 +78,15 @@ class PostReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
+
+
+class PostComment(db.Model):
+    __tablename__ = 'post_comments'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    post_id = db.Column(db.Integer, nullable=False)
+    content = db.Column(db.Unicode(128), nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+
+    
