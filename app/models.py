@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 from random import randint, seed
 from hashlib import md5
 
@@ -38,7 +39,7 @@ class User(UserMixin, db.Model):
     @password.setter
     def password(self, password):
         self.password_hash = md5(password + self.salt).hexdigest()
-        
+
 
 class Fan(db.Model):
     __tablename__ = 'fans'
@@ -52,3 +53,14 @@ class Collection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
+
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
+    image = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.Unicode(140), nullable=False)
+    channel_id = db.Column(db.Integer, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=True)
