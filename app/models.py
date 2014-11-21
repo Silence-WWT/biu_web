@@ -38,3 +38,17 @@ class User(UserMixin, db.Model):
     @password.setter
     def password(self, password):
         self.password_hash = md5(password + self.salt).hexdigest()
+        
+
+class Fan(db.Model):
+    __tablename__ = 'fans'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    idol_id = db.Column(db.Integer, nullable=False)
+
+
+class Collection(db.Model):
+    __tablename__ = 'collections'
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
