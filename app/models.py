@@ -89,4 +89,16 @@ class PostComment(db.Model):
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
-    
+
+class PostCommentLike(db.Model):
+    __tablename__ = 'post_comment_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    post_comment_id = db.Column(db.Integer, nullable=False)
+
+
+class PostCommentReport(db.Model):
+    __tablename__ = 'post_comment_reports'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    post_comment_id = db.Column(db.Integer, nullable=False)
