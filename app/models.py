@@ -64,3 +64,17 @@ class Post(db.Model):
     description = db.Column(db.Unicode(140), nullable=False)
     channel_id = db.Column(db.Integer, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=True)
+
+
+class PostLike(db.Model):
+    __tablename__ = 'post_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    post_id = db.Column(db.Integer, nullable=False)
+
+
+class PostReport(db.Model):
+    __tablename__ = 'post_reports'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    post_id = db.Column(db.Integer, nullable=False)
