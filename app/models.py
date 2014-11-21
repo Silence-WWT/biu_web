@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), default='', nullable=False)
     password_hash = db.Column('password', db.String(32), nullable=False)
     salt = db.Column(db.String(64), nullable=False)
-    created = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
     mobile = db.Column(db.CHAR(11), nullable=False)
     identity = db.Column(db.String(64), nullable=False)
     money = db.Column(db.Integer, default=0, nullable=False)
@@ -102,3 +102,9 @@ class PostCommentReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_comment_id = db.Column(db.Integer, nullable=False)
+
+
+class Channel(db.Model):
+    __tablename__ = 'channels'
+    id = db.Column(db.Integer, primary_key=True)
+    channel = db.Column(db.Unicode(30), nullable=False)
