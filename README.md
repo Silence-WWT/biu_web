@@ -11,5 +11,5 @@ Setup
     
 Run
 ----
-    ./manager db upgrade
-    ./manager runserver -d
+    ./manage db upgrade
+    ./manage runserver -d

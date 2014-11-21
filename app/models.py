@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import time
 from random import randint, seed
-from hashlib import md5
 
 from flask.ext.login import UserMixin
-
-from .import db
+from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
+from app import db
 
 seed()
 
@@ -38,7 +37,11 @@ class User(UserMixin, db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = md5(password + self.salt).hexdigest()
+        self.salt = generate_random_salt()
+        self.password_hash = generate_password_hash(password, self.salt)
+
+    def verify_password(self, password):
+        return check_password_hash(password, self.password_hash, self.salt)
 
 
 class Fan(db.Model):
@@ -61,7 +64,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     image = db.Column(db.String(128), nullable=False)
-    description = db.Column(db.Unicode(140), nullable=False)
+    content = db.Column(db.Unicode(140), nullable=False)
     channel_id = db.Column(db.Integer, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=True)
 
@@ -85,7 +88,7 @@ class PostComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
-    content = db.Column(db.Unicode(128), nullable=False)
+    content = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
