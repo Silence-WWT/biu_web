@@ -3,8 +3,10 @@ import time
 from random import randint, seed
 
 from flask.ext.login import UserMixin
-from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
+from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash, enbase64
+
 from app import db
+from config import Config
 
 seed()
 
@@ -14,8 +16,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Unicode(15), nullable=False)
     nickname = db.Column(db.Unicode(10), nullable=False)
-    password_hash = db.Column('password', db.String(32), nullable=False)
-    salt = db.Column(db.String(64), nullable=False)
+    password_hash = db.Column('password', db.String(128), nullable=False)
+    salt = db.Column(db.String(128), nullable=False)
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     mobile = db.Column(db.CHAR(11), nullable=False)
     identity = db.Column(db.String(64), nullable=False)
@@ -23,7 +25,7 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(128), default='', nullable=False)
     signature = db.Column(db.Unicode(30), default=u'', nullable=False)
     push = db.Column(db.Boolean, default=True, nullable=False)
-    no_disturb = db.Column(db.Boolean, default=False, nullable=False)
+    disturb = db.Column(db.Boolean, default=True, nullable=False)
 
     @staticmethod
     def get_random_id():
@@ -47,6 +49,20 @@ class User(UserMixin, db.Model):
     def update_identity(self, identity):
         if identity and identity != self.identity:
             self.identity = identity
+
+    def get_user_info_dict(self):
+        user_dict = {
+            'user_id': self.id,
+            'username': self.username,
+            'mobile': self.mobile,
+            'identity': self.identity,
+            'golds': self.golds,
+            'avatar': Config.STATIC_URL + self.avatar,
+            'signature': self.signature,
+            'push': self.push,
+            'no_disturb': self.no_disturb
+        }
+        return user_dict
 
 
 class Fan(db.Model):
