@@ -14,15 +14,16 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Unicode(15), nullable=False)
     nickname = db.Column(db.Unicode(10), nullable=False)
-    email = db.Column(db.String(64), default='', nullable=False)
     password_hash = db.Column('password', db.String(32), nullable=False)
     salt = db.Column(db.String(64), nullable=False)
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     mobile = db.Column(db.CHAR(11), nullable=False)
     identity = db.Column(db.String(64), nullable=False)
-    money = db.Column(db.Integer, default=0, nullable=False)
+    golds = db.Column(db.Integer, default=0, nullable=False)
     avatar = db.Column(db.String(128), default='', nullable=False)
     signature = db.Column(db.Unicode(30), default=u'', nullable=False)
+    push = db.Column(db.Boolean, default=True, nullable=False)
+    no_disturb = db.Column(db.Boolean, default=False, nullable=False)
 
     @staticmethod
     def get_random_id():
@@ -42,6 +43,10 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(password, self.password_hash, self.salt)
+
+    def update_identity(self, identity):
+        if identity and identity != self.identity:
+            self.identity = identity
 
 
 class Fan(db.Model):
@@ -88,6 +93,8 @@ class PostComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
+    x = db.Column(db.Float, nullable=False)
+    y = db.Column(db.Float, nullable=False)
     content = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
