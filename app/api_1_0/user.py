@@ -56,3 +56,21 @@ def login():
         data['status'] = LOGIN_FAIL
         data['message'] = LOGIN_FAIL_MSG
     return jsonify(data)
+
+
+@api.route('/push_setting')
+def push_setting():
+    data = {}
+    user_id = request.values.get('user_id', '', type=str)
+    push = request.values.get('push', True, type=bool)
+    disturb = request.values.get('disturb', True, type=bool)
+    user = User.query.get(user_id)
+    if not user:
+        data['status'] = USER_NOT_EXIST
+        data['message'] = USER_NOT_EXIST_MSG
+    else:
+        user.push = push
+        user.disturb = disturb
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    return jsonify(data)
