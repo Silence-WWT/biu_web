@@ -122,6 +122,14 @@ class Post(db.Model):
     def get_post(self):
         return self
 
+    def report_delete(self):
+        reports_count = PostReport.query.filter_by(post_id=self.id).count()
+        if self.is_deleted:
+            return False
+        elif not self.is_deleted and reports_count >= 10:
+            self.is_deleted = True
+        return self.is_deleted
+
 
 class PostLike(db.Model):
     __tablename__ = 'post_likes'
@@ -146,6 +154,10 @@ class PostReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, post_id, user_id):
+        self.post_id = post_id
+        self.user_id = user_id
 
     @staticmethod
     def is_reported(post_id, user_id):
@@ -180,6 +192,14 @@ class PostComment(db.Model):
     def get_post(self):
         return Post.query.get(self.post_id)
 
+    def report_delete(self):
+        reports_count = PostCommentReport.query.filter_by(post_comment_id=self.id).count()
+        if self.is_deleted:
+            return False
+        elif not self.is_deleted and reports_count >= 10:
+            self.is_deleted = True
+        return self.is_deleted
+
 
 class PostCommentLike(db.Model):
     __tablename__ = 'post_comment_likes'
@@ -204,6 +224,10 @@ class PostCommentReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_comment_id = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, post_comment_id, user_id):
+        self.post_comment_id = post_comment_id
+        self.user_id = user_id
 
     @staticmethod
     def is_reported(post_comment_id, user_id):

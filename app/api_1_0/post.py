@@ -83,3 +83,37 @@ def like():
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
     return jsonify(data)
+
+
+@api.route('/report')
+def report():
+    data = {}
+    target_id = request.values.get('target_id', '', type=str)
+    user_id = request.values.get('user_id', '', type=str)
+    type_ = request.values.get('type', '', type=str)
+    if type_ == 'post':
+        target = PostReport.query.get(target_id)
+        target_class = PostReport
+    elif type_ == 'post_comment':
+        target = PostCommentReport.query.get(target_id)
+        target_class = PostCommentReport
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+        return jsonify(data)
+
+    user = User.query.get(user_id)
+    if target and user:
+        target_report = target_class.is_reported(target_id, user_id)
+        if not target_report:
+            target_report = target_class(target_id, user_id)
+            db.session.add(target_report)
+            db.session.commit()
+            if target.report_delete():
+                pass  # TODO: 举报推送
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
