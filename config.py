@@ -8,7 +8,11 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     DEBUG = True
+    IMAGE_DIR = '/home/silence/Python/Biu/'
     STATIC_URL = ''
+    GOLDS_POST = 5
+    GOLDS_COMMENT = 1
+    GOLDS_LIKE = 2
 
 
 class DevelopmentConfig(Config):
