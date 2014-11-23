@@ -2,11 +2,11 @@
 import time
 from random import randint, seed
 
+from flask import current_app
 from flask.ext.login import UserMixin
-from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash, enbase64
+from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
 
 from app import db
-from config import Config
 
 seed()
 
@@ -57,12 +57,39 @@ class User(UserMixin, db.Model):
             'mobile': self.mobile,
             'identity': self.identity,
             'golds': self.golds,
-            'avatar': Config.STATIC_URL + self.avatar,
+            'avatar': current_app.config['STATIC_URL'] + self.avatar,
             'signature': self.signature,
             'push': self.push,
             'no_disturb': self.no_disturb
         }
         return user_dict
+
+    def get_brief_info_dict(self):
+        user_dict = {
+            'user_id': self.id,
+            'username': self.username,
+            'avatar': current_app.config['STATIC_URL'] + self.avatar,
+        }
+        return user_dict
+
+    def add_golds(self, parameter, method='add', reword=0):
+        if parameter == 'post':
+            golds = current_app['GOLDS_POST']
+        elif parameter == 'comment':
+            golds = current_app['GOLDS_COMMENT']
+        elif parameter == 'like':
+            golds = current_app['GOLDS_LIKE']
+        elif parameter == 'reword':
+            golds = reword
+        else:
+            return False
+        if method == 'minus' and not reword:
+            golds = -golds
+        if golds >= 0 or self.golds >= -golds:
+            self.golds += golds
+            return True
+        else:
+            return False
 
 
 class Fan(db.Model):
@@ -89,6 +116,12 @@ class Post(db.Model):
     channel_id = db.Column(db.Integer, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=True)
 
+    def get_user(self):
+        return User.query.get(self.user_id)
+
+    def get_post(self):
+        return self
+
 
 class PostLike(db.Model):
     __tablename__ = 'post_likes'
@@ -96,12 +129,30 @@ class PostLike(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
 
+    def __init__(self, post_id, user_id):
+        self.post_id = post_id
+        self.user_id = user_id
+
+    @staticmethod
+    def is_liked(post_id, user_id):
+        return PostLike.query.filter_by(post_id=post_id, user_id=user_id).limit(1).first()
+
+    def get_post(self):
+        return Post.query.get(self.post_id)
+
 
 class PostReport(db.Model):
     __tablename__ = 'post_reports'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def is_reported(post_id, user_id):
+        return PostReport.query.filter_by(post_id=post_id, user_id=user_id).limit(1).first()
+
+    def get_post(self):
+        return Post.query.get(self.post_id)
 
 
 class PostComment(db.Model):
@@ -115,6 +166,20 @@ class PostComment(db.Model):
     created = db.Column(db.Integer, default=time.time(), nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
+    def get_comment_info(self):
+        comment_dict = {
+            'post_id': self.post_id,
+            'created': self.created,
+            'content': self.content,
+            'x': self.x,
+            'y': self.y,
+            'user': User.query.get(self.user_id).get_brief_info_dict()
+        }
+        return comment_dict
+
+    def get_post(self):
+        return Post.query.get(self.post_id)
+
 
 class PostCommentLike(db.Model):
     __tablename__ = 'post_comment_likes'
@@ -122,12 +187,30 @@ class PostCommentLike(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     post_comment_id = db.Column(db.Integer, nullable=False)
 
+    def __init__(self, post_comment_id, user_id):
+        self.post_comment_id = post_comment_id
+        self.user_id = user_id
+
+    @staticmethod
+    def is_liked(post_comment_id, user_id):
+        return PostCommentLike.query.filter_by(post_comment_id=post_comment_id, user_id=user_id).limit(1).first()
+
+    def get_post(self):
+        return Post.query.get(self.post_id)
+
 
 class PostCommentReport(db.Model):
     __tablename__ = 'post_comment_reports'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     post_comment_id = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def is_reported(post_comment_id, user_id):
+        return PostCommentReport.query.filter_by(post_comment_id=post_comment_id, user_id=user_id).limit(1).first()
+
+    def get_post(self):
+        return Post.query.get(self.post_id)
 
 
 class Channel(db.Model):
