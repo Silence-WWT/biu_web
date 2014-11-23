@@ -38,6 +38,47 @@ def post_comment():
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
         data['post_comment'] = comment.get_comment_info()
+        comment.get_post().get_user().add_golds('comment')
+        # TODO: 评论推送
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
+@api.route('/like')
+def like():
+    data = {}
+    target_id = request.values.get('target_id', '', type=str)
+    user_id = request.values.get('user_id', '', type=str)
+    type_ = request.values.get('type', '', type=str)
+    cancel = request.values.get('cancel', 0, type=int)
+    if type_ == 'post':
+        target = Post.query.get(target_id)
+        target_class = PostLike
+    elif type_ == 'post_comment':
+        target = PostComment.query.get(target_id)
+        target_class = PostCommentLike
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+        return jsonify(data)
+
+    user = User.query.get(user_id)
+    if target and user:
+        target_like = target_class.is_liked(target_id, user_id)
+        if not cancel and not target_like:
+            target_like = target_class(target_id, user_id)
+            db.session.add(target_like)
+            db.session.commit()
+            target_like.get_post().get_user().add_golds('like')
+            # TODO: 点赞推送
+        elif cancel and target_like:
+            db.session.delete(target_like)
+            db.session.commit()
+            target_like.get_post().get_user().add_golds('like', 'minus')
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
     else:
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
