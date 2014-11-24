@@ -60,7 +60,7 @@ class User(UserMixin, db.Model):
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
             'signature': self.signature,
             'push': self.push,
-            'no_disturb': self.no_disturb
+            'disturb': self.disturb
         }
         return user_dict
 
