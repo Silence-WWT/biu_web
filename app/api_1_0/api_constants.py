@@ -12,3 +12,5 @@ PARAMETER_ERROR = 2000
 PARAMETER_ERROR_MSG = 'lack parameter or wrong parameter!'
 
 STATIC_URL = ''
+
+SETTING_IS_NOT_VALID = -1
