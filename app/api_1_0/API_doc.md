@@ -57,6 +57,23 @@ login
             signature: 个人签名
             push: 是否推送消息
             disturb: 夜间是否推送消息
+
+personal_info_setting
+---
+    URL:
+        /api/v1.0/personal_info_setting
+    method:
+        post
+    parameters:
+        user_id
+        image: 如果用户没有更换头像，可以为空
+        nickname: 无论用户是否重新设置了昵称和签名，每次调用接口都必须发送当前的昵称和签名
+        signature
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: 0 for success, 1004 for valid image, 1002 for user not exists
+        message: message of status code
         
 push_setting
 ---
@@ -67,7 +84,7 @@ push_setting
     parameters:
         user_id
         push
-        disturb: push, disturb 可只传其中一个, 且必须为int
+        disturb: push, disturb 可只传其中一个, 且必须为0 或 1
     json:
         {"status": 0, "message": ""}
         

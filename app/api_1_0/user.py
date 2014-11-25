@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-from flask import jsonify, request
+from flask import jsonify, request, render_template_string
 
 from app import db
 from app.models import User
+from app.utils.image import upload_image, valid_image
 from . import api
+from forms import PersonalInfoForm
 from api_constants import *
 
 
@@ -77,3 +79,52 @@ def push_setting():
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     return jsonify(data)
+
+
+@api.route('/personal_info_setting', methods=['GET', 'POST'])
+def personal_info_setting():
+    data = {}
+    if request.method == 'POST':
+        image = request.files.get('image')
+        user_id = request.values.get('user_id', '', type=str)
+        nickname = request.values.get('nickname', u'', type=unicode)
+        signature = request.values.get('signature', u'', type=unicode)
+        user = User.query.get(user_id)
+        if user:
+            user.nickname = nickname
+            user.signature = signature
+            if image:
+                if valid_image(image.name):
+                    user.avatar = upload_image(int(user_id), image)
+                else:
+                    data['status'] = NOT_IMAGE
+                    data['message'] = NOT_IMAGE_MSG
+                    return jsonify(data)
+            data['status'] = SUCCESS
+            data['message'] = SUCCESS_MSG
+        else:
+            data['status'] = USER_NOT_EXIST
+            data['message'] = USER_NOT_EXIST_MSG
+        return jsonify(data)
+    else:
+        return render_template_string(
+            """
+            <!DOCTYPE html>
+            <html>
+            <head lang="en">
+              <meta charset="UTF-8">
+            </head>
+            <body>
+              <form enctype="multipart/form-data" method="post">
+                {{ form.csrf_token }}
+                {{ form.image }}
+                {{ form.user_id }}
+                {{ form.nickname }}
+                {{ form.signature }}
+                <input type="submit">
+              </form>
+            </body>
+            </html>
+            """,
+            form=PersonalInfoForm()
+        )
