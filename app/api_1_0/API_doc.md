@@ -64,7 +64,7 @@ push_setting
 post_comment
 ---
     URL:
-        /api/v1.0/post_comment?user_id=&post_id=&content=&post_id=&x=&y=
+        /api/v1.0/post_comment?user_id=&post_id=&content=&x=&y=
     method:
         get
     parameters:
