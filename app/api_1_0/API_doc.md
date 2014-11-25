@@ -13,14 +13,15 @@ register
         identity: uuid
         mobile: 后端先不检测，因为目前还没确定注册是否需要手机号……
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "username": "", "mobile": "", "identity": "",
-            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
+        {"status": 0, "message": "success", "user": {"user_id": "", "username": "", "nickname": "", "mobile": "",
+            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
         status: 0 for success, 1001 for username exists, 2000 for parameter error
         message: message of status code
         user: a dict of user's info
             user_id
             username
+            nickname
             mobile
             identity
             golds: 金币
@@ -40,10 +41,22 @@ login
         password
         identity
     json:
-        {"status": 0, "message": ""}
-        
-        status: 0 for success, 1000 for login fail
-        message: message of status
+        {"status": 0, "message": "success", "user": {"user_id": "", "username": "", "nickname": "", "mobile": "",
+            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
+            
+        status: 0 for success, 1001 for username exists, 2000 for parameter error
+        message: message of status code
+        user: a dict of user's info
+            user_id
+            username
+            nickname
+            mobile
+            identity
+            golds: 金币
+            avatar: 头像
+            signature: 个人签名
+            push: 是否推送消息
+            disturb: 夜间是否推送消息
         
 push_setting
 ---

@@ -54,6 +54,7 @@ class User(UserMixin, db.Model):
         user_dict = {
             'user_id': self.id,
             'username': self.username,
+            'nickname': self.nickname,
             'mobile': self.mobile,
             'identity': self.identity,
             'golds': self.golds,
@@ -74,11 +75,11 @@ class User(UserMixin, db.Model):
 
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':
-            golds = current_app['GOLDS_POST']
+            golds = current_app.config['GOLDS_POST']
         elif parameter == 'comment':
-            golds = current_app['GOLDS_COMMENT']
+            golds = current_app.config['GOLDS_COMMENT']
         elif parameter == 'like':
-            golds = current_app['GOLDS_LIKE']
+            golds = current_app.config['GOLDS_LIKE']
         elif parameter == 'reword':
             golds = reword
         else:
