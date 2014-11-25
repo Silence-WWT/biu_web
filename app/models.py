@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 from random import randint, seed
 
 from flask import current_app
@@ -7,6 +6,7 @@ from flask.ext.login import UserMixin
 from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
 
 from app import db
+from utils.time_now import time_now
 
 seed()
 
@@ -18,7 +18,7 @@ class User(UserMixin, db.Model):
     nickname = db.Column(db.Unicode(10), nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
-    created = db.Column(db.Integer, default=time.time(), nullable=False)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
     mobile = db.Column(db.CHAR(11), nullable=False)
     identity = db.Column(db.String(64), nullable=False)
     golds = db.Column(db.Integer, default=0, nullable=False)
@@ -111,7 +111,7 @@ class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    created = db.Column(db.Integer, default=time.time(), nullable=False)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
     image = db.Column(db.String(128), nullable=False)
     content = db.Column(db.Unicode(140), nullable=False)
     channel_id = db.Column(db.Integer, nullable=False)
@@ -176,7 +176,7 @@ class PostComment(db.Model):
     x = db.Column(db.Float, nullable=False)
     y = db.Column(db.Float, nullable=False)
     content = db.Column(db.Unicode(30), nullable=False)
-    created = db.Column(db.Integer, default=time.time(), nullable=False)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     def get_comment_info(self):
