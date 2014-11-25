@@ -117,3 +117,25 @@ def report():
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
     return jsonify(data)
+
+
+@api.route('/up_reword')
+def up_reword():
+    data = {}
+    user_id = request.values.get('user_id', '', type=str)
+    up_id = request.values.get('up_id', '', type=str)
+    golds = request.values.get('golds', 0, type=int)
+    user = User.query.get(user_id)
+    up = User.query.get(up_id)
+    if user and up and user != up and golds:
+        if user.add_golds('reword', 'minus', golds):
+            up.add_golds('reword', 'add', golds)
+            data['status'] = SUCCESS
+            data['message'] = SUCCESS_MSG
+        else:
+            data['status'] = USER_GOLDS_NOT_ENOUGH
+            data['message'] = USER_GOLDS_NOT_ENOUGH_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)

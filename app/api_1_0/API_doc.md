@@ -122,4 +122,20 @@ report
         
         status: 0 for success, 2000 for parameter error
         message: message of status
+
+up_reword
+---
+    URL:
+        /api/v1.0/up_reword?user_id=&up_id=&golds=
+    method:
+        get
+    parameters:
+        user_id
+        up_id: up主的id,无法打赏自己
+        golds: 打赏的金币,必须大于0
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: 0 for success, 1003 for user's golds not enough, 2000 for parameter error
+        message: message for status code
         
