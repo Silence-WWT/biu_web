@@ -61,7 +61,7 @@ login
 personal_info_setting
 ---
     URL:
-        /api/v1.0/personal_info_setting
+        /api/v1.0/personal_info_setting    目前暂时在浏览器里用get方式直接打开可以上传图片
     method:
         post
     parameters:

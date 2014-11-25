@@ -118,8 +118,11 @@ def personal_info_setting():
               <form enctype="multipart/form-data" method="post">
                 {{ form.csrf_token }}
                 {{ form.image }}
+                user_id:
                 {{ form.user_id }}
+                nickname:
                 {{ form.nickname }}
+                signature:
                 {{ form.signature }}
                 <input type="submit">
               </form>
