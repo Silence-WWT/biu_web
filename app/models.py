@@ -51,9 +51,8 @@ class User(UserMixin, db.Model):
             self.identity = identity
 
     def get_user_info_dict(self):
-        user_dict = {
+        return {
             'user_id': self.id,
-            'username': self.username,
             'nickname': self.nickname,
             'mobile': self.mobile,
             'identity': self.identity,
@@ -63,15 +62,13 @@ class User(UserMixin, db.Model):
             'push': self.push,
             'disturb': self.disturb
         }
-        return user_dict
 
     def get_brief_info_dict(self):
-        user_dict = {
+        return {
             'user_id': self.id,
-            'username': self.username,
+            'nickname': self.nickname,
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
         }
-        return user_dict
 
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':
@@ -130,6 +127,16 @@ class Post(db.Model):
         elif not self.is_deleted and reports_count >= 10:
             self.is_deleted = True
         return self.is_deleted
+
+    def get_post_info_dict(self):
+        return {
+            'user': self.get_user().get_brief_info_dict(),
+            'post_id': self.id,
+            'content': self.content,
+            'created': self.created,
+            'channel_id': self.channel_id,
+            'image': current_app.config['STATIC_URL'] + self.image
+        }
 
 
 class PostLike(db.Model):

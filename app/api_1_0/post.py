@@ -1,15 +1,63 @@
 # -*- coding: utf-8 -*-
-from flask import request, jsonify
+from flask import request, jsonify, render_template_string
 
-from ..models import User, Post, PostLike, PostReport, PostComment, PostCommentLike, PostCommentReport
+from ..models import User, Post, PostLike, PostReport, PostComment, PostCommentLike, PostCommentReport, Channel
 from .import api
 from app import db
+from app.utils.image import upload_image, valid_image
+from forms import PostForm
 from api_constants import *
 
 
-@api.route('/post')
+@api.route('/post', methods=['GET', 'POST'])
 def post():
-    pass
+    data = {'post': {}}
+    if request.method == 'POST':
+        image = request.files.get('image')
+        user_id = request.values.get('user_id', '', type=str)
+        content = request.values.get('content', u'', type=unicode)
+        channel_id = request.values.get('channel_id', '', type=str)
+        user = User.query.get(user_id)
+        channel = Channel.query.get(channel_id)
+        # TODO: check channel
+        if user and image and valid_image(image.filename):
+            post_ = Post(
+                user_id=user_id,
+                image=upload_image(int(user_id), image),
+                content=content,
+                channel_id=channel_id
+            )
+            db.session.add(post_)
+            db.session.commit()
+            data['status'] = SUCCESS
+            data['message'] = SUCCESS_MSG
+            data['post'] = post_.get_post_info_dict()
+        else:
+            data['status'] = PARAMETER_ERROR
+            data['message'] = PARAMETER_ERROR_MSG
+        return jsonify(data)
+    else:
+        return render_template_string("""
+        <!DOCTYPE html>
+            <html>
+            <head lang="en">
+              <meta charset="UTF-8">
+            </head>
+            <body>
+              <form enctype="multipart/form-data" method="post">
+                {{ form.csrf_token }}
+                {{ form.image }}
+                user_id:
+                {{ form.user_id }}
+                content:
+                {{ form.content }}
+                channel_id:
+                {{ form.channel_id }}
+                <input type="submit">
+              </form>
+            </body>
+            </html>
+        """, form=PostForm())
 
 
 @api.route('/post_comment')

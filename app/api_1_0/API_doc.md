@@ -41,8 +41,8 @@ login
         password
         identity
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "username": "", "nickname": "", "mobile": "",
-            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
+            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
         status: 0 for success, 1001 for username exists, 2000 for parameter error
         message: message of status code
@@ -91,6 +91,34 @@ push_setting
         status: 0 for success, 1002 for user not exists
         message: message of status
         
+post
+---
+    URL:
+        /api/v1.0/post      目前暂时在浏览器里用get方式直接打开可以上传图片
+    method:
+        post
+    parameters:
+        user_id
+        content
+        channel_id
+        image
+    json:
+        {"status": 0, "message": "success", "post": {"channel_id": "", "content": "", "created": "", "image": "",
+            "post_id": "", "user": {"avatar": "", "user_id": "", "nickname": ""}}}
+        
+        status: 0 for success, 2000 for parameter error
+        message: message of status code
+        post: a dict of post
+            post_id
+            created
+            image
+            content
+            channel_id
+            user: a dict of user
+                user_id
+                avatar
+                nickname
+        
 post_comment
 ---
     URL:
@@ -105,7 +133,7 @@ post_comment
         y
     json:
         {"status": 0, "message": "", "post_comment": {"post_id": "", "created": "", "content": "", "x": "", "y": "",
-            "user": {"user_id": "", "username": "", "avatar": ""}}}
+            "user": {"user_id": "", "nickname": "", "avatar": ""}}}
         
         status: 0 for success, 1002 for user not exists, 2000 for parameter error
         message: message of status
@@ -117,7 +145,7 @@ post_comment
             y
             user: a dict of user
                 user_id
-                username
+                nickname
                 avatar
                 
 like

@@ -94,7 +94,7 @@ def personal_info_setting():
             user.nickname = nickname
             user.signature = signature
             if image:
-                if valid_image(image.name):
+                if valid_image(image.filename):
                     user.avatar = upload_image(int(user_id), image)
                 else:
                     data['status'] = NOT_IMAGE
