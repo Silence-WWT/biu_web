@@ -10,7 +10,7 @@ from api_constants import *
 @api.route('/register')
 def register():
     data = {'user': {}}
-    username = request.values.get('username', '', type=str)
+    username = request.values.get('username', u'', type=unicode)
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
     mobile = request.values.get('mobile', '', type=str)
