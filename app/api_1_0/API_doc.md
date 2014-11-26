@@ -74,6 +74,28 @@ follow
         status: 0 for success, 2000 for parameters error
         message: message of status code
 
+follow_list
+---
+    URL:
+        /api/v1.0/follow_list?user_id=&target_id=&following=&page=
+    method:
+        get
+    parameters:
+        user_id: 用户id, 如果用户未登录可不传或传空
+        target_id: 所要查看关注列表的用户的id， 如果查看自己的关注列表，可不传
+        following: default 1, 1 for 粉丝列表， 0 for 被关注的列表
+        page: default 1
+    json:
+        {"status": 0, "message": "success", "follows": [{"user_id": "", "nickname": "", "avatar": "", "followed": ""]}
+        
+        status: 0 for success, 2000 for parameters error
+        message: message of status code
+        follows: a list of users
+            user_id
+            nickname
+            avatar
+            followed: 调用这个接口的用户是否已关注该用户
+
 personal_info_setting
 ---
     URL:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import jsonify, request, render_template_string
+from flask import jsonify, request, render_template_string, current_app
 
 from app import db
 from app.models import User, Fan
@@ -147,14 +147,40 @@ def follow():
             fan = Fan(user_id=user_id, idol_id=idol_id)
             db.session.add(fan)
             db.session.commit()
-            data['status'] = SUCCESS
-            data['message'] = SUCCESS_MSG
         elif fan and cancel:
             db.session.delete(fan)
             db.session.commit()
-            data['status'] = SUCCESS
-            data['message'] = SUCCESS_MSG
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
     else:
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
+@api.route('/follow_list')
+def follow_list():
+    data = {'follows': []}
+    user_id = request.values.get('user_id', '', type=str)
+    page = request.values.get('page', 1, type=int)
+    following = request.values.get('following', 1, type=int)
+    target_id = request.values.get('target_id', '', type=str)
+    user = User.query.get(user_id)
+    target = User.query.get(target_id)
+    if target:
+        follows = target.get_fans(following, page, current_app.config['FOLLOW_LIST_PER_PAGE'])
+    elif user:
+        follows = user.get_fans(following, page, current_app.config['FOLLOW_LIST_PER_PAGE'])
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+        return jsonify(data)
+    for follow_ in follows:
+        fan = Fan.query.filter_by(user_id=user_id, idol_id=follow_.idol_id).limit(1).first()
+        followed = True if fan else False
+        follow_dict = follow_.get_user_or_idol(following).get_brief_info_dict()
+        follow_dict['followed'] = followed
+        data['follows'].append(follow_dict)
+    data['status'] = SUCCESS
+    data['message'] = SUCCESS_MSG
     return jsonify(data)

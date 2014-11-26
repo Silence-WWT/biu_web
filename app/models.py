@@ -89,12 +89,27 @@ class User(UserMixin, db.Model):
         else:
             return False
 
+    def get_fans(self, following, page, per_page):
+        if following:
+            return Fan.query.filter_by(user_id=self.id).order_by(-Fan.created).\
+                paginate(page, per_page, False).items
+        else:
+            return Fan.query.filter_by(idol_id=self.id).order_by(-Fan.created).\
+                paginate(page, per_page, False).items
+
 
 class Fan(db.Model):
     __tablename__ = 'fans'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     idol_id = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
+
+    def get_user_or_idol(self, following):
+        if following:
+            return User.query.get(self.idol_id)
+        else:
+            return User.query.get(self.user_id)
 
 
 class Collection(db.Model):

@@ -13,6 +13,7 @@ class Config:
     GOLDS_POST = 5
     GOLDS_COMMENT = 1
     GOLDS_LIKE = 2
+    FOLLOW_LIST_PER_PAGE = 10
 
 
 class DevelopmentConfig(Config):
