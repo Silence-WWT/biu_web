@@ -58,6 +58,22 @@ login
             push: 是否推送消息
             disturb: 夜间是否推送消息
 
+follow
+---
+    URL:
+        /api/v1.0/follow?user_id=&idle_id=&cancel=
+    method:
+        get
+    parameters:
+        user_id
+        idle_id: 需要关注的偶像的id
+        cancel: 取消关注，默认为0
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: 0 for success, 2000 for parameters error
+        message: message of status code
+
 personal_info_setting
 ---
     URL:

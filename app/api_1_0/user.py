@@ -2,7 +2,7 @@
 from flask import jsonify, request, render_template_string
 
 from app import db
-from app.models import User
+from app.models import User, Fan
 from app.utils.image import upload_image, valid_image
 from . import api
 from forms import PersonalInfoForm
@@ -131,3 +131,30 @@ def personal_info_setting():
             """,
             form=PersonalInfoForm()
         )
+
+
+@api.route('/follow')
+def follow():
+    data = {}
+    user_id = request.values.get('user_id', '', type=str)
+    idle_id = request.values.get('idle_id', '', type=str)
+    cancel = request.values.get('cancel', 0, type=int)
+    user = User.query.get(user_id)
+    idle = User.query.get(idle_id)
+    if user and idle:
+        fan = Fan.query.filter_by(user_id=user_id, idle_id=idle_id).limit(1).fitst()
+        if not fan and not cancel:
+            fan = Fan(user_id=user_id, idle_id=idle_id)
+            db.session.add(fan)
+            db.session.commit()
+            data['status'] = SUCCESS
+            data['message'] = SUCCESS_MSG
+        elif fan and cancel:
+            db.session.delete(fan)
+            db.session.commit()
+            data['status'] = SUCCESS
+            data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
