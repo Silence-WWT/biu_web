@@ -137,14 +137,14 @@ def personal_info_setting():
 def follow():
     data = {}
     user_id = request.values.get('user_id', '', type=str)
-    idle_id = request.values.get('idle_id', '', type=str)
+    idol_id = request.values.get('idol_id', '', type=str)
     cancel = request.values.get('cancel', 0, type=int)
     user = User.query.get(user_id)
-    idle = User.query.get(idle_id)
-    if user and idle:
-        fan = Fan.query.filter_by(user_id=user_id, idle_id=idle_id).limit(1).fitst()
+    idol = User.query.get(idol_id)
+    if user and idol:
+        fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id).limit(1).first()
         if not fan and not cancel:
-            fan = Fan(user_id=user_id, idle_id=idle_id)
+            fan = Fan(user_id=user_id, idol_id=idol_id)
             db.session.add(fan)
             db.session.commit()
             data['status'] = SUCCESS

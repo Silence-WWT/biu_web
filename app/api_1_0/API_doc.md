@@ -61,12 +61,12 @@ login
 follow
 ---
     URL:
-        /api/v1.0/follow?user_id=&idle_id=&cancel=
+        /api/v1.0/follow?user_id=&idol_id=&cancel=
     method:
         get
     parameters:
         user_id
-        idle_id: 需要关注的偶像的id
+        idol_id: 需要关注的偶像的id
         cancel: 取消关注，默认为0
     json:
         {"status": 0, "message": "success"}
