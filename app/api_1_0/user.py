@@ -147,9 +147,11 @@ def follow():
             fan = Fan(user_id=user_id, idol_id=idol_id)
             db.session.add(fan)
             db.session.commit()
+            # TODO: 关注推送
+        elif fan.is_deleted and not cancel:
+            fan.is_deleted = False
         elif fan and cancel:
-            db.session.delete(fan)
-            db.session.commit()
+            fan.is_deleted = True
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:
@@ -176,7 +178,7 @@ def follow_list():
         data['message'] = PARAMETER_ERROR_MSG
         return jsonify(data)
     for follow_ in follows:
-        fan = Fan.query.filter_by(user_id=user_id, idol_id=follow_.idol_id).limit(1).first()
+        fan = Fan.query.filter_by(user_id=user_id, idol_id=follow_.idol_id, is_deleted=False).limit(1).first()
         followed = True if fan else False
         follow_dict = follow_.get_user_or_idol(following).get_brief_info_dict()
         follow_dict['followed'] = followed

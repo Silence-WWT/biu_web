@@ -91,10 +91,10 @@ class User(UserMixin, db.Model):
 
     def get_fans(self, following, page, per_page):
         if following:
-            return Fan.query.filter_by(user_id=self.id).order_by(-Fan.created).\
+            return Fan.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Fan.created).\
                 paginate(page, per_page, False).items
         else:
-            return Fan.query.filter_by(idol_id=self.id).order_by(-Fan.created).\
+            return Fan.query.filter_by(idol_id=self.id, is_deleted=False).order_by(-Fan.created).\
                 paginate(page, per_page, False).items
 
 
@@ -104,6 +104,7 @@ class Fan(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     idol_id = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     def get_user_or_idol(self, following):
         if following:
