@@ -249,3 +249,13 @@ class Channel(db.Model):
     __tablename__ = 'channels'
     id = db.Column(db.Integer, primary_key=True)
     channel = db.Column(db.Unicode(30), nullable=False)
+
+    @staticmethod
+    def generate():
+        db.session.add(Channel(channel=u'热门'))
+        db.session.add(Channel(channel=u'关注'))
+        db.session.add(Channel(channel=u'涨姿势'))
+        db.session.add(Channel(channel=u'随手拍'))
+        db.session.add(Channel(channel=u'那么问题来了'))
+        db.session.add(Channel(channel=u'全明星阵容'))
+        db.session.commit()

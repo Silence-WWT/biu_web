@@ -19,8 +19,7 @@ def post():
         channel_id = request.values.get('channel_id', '', type=str)
         user = User.query.get(user_id)
         channel = Channel.query.get(channel_id)
-        # TODO: check channel
-        if user and image and valid_image(image.filename):
+        if user and image and channel and valid_image(image.filename):
             post_ = Post(
                 user_id=user_id,
                 image=upload_image(int(user_id), image),
