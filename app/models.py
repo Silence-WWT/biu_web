@@ -14,7 +14,6 @@ seed()
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Unicode(15), nullable=False)
     nickname = db.Column(db.Unicode(10), nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
@@ -91,10 +90,10 @@ class User(UserMixin, db.Model):
 
     def get_fans(self, following, page, per_page):
         if following:
-            return Fan.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Fan.created).\
+            return Fan.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Fan.created). \
                 paginate(page, per_page, False).items
         else:
-            return Fan.query.filter_by(idol_id=self.id, is_deleted=False).order_by(-Fan.created).\
+            return Fan.query.filter_by(idol_id=self.id, is_deleted=False).order_by(-Fan.created). \
                 paginate(page, per_page, False).items
 
 
@@ -275,3 +274,11 @@ class Channel(db.Model):
         db.session.add(Channel(channel=u'那么问题来了'))
         db.session.add(Channel(channel=u'全明星阵容'))
         db.session.commit()
+
+
+def generate_helper_data():
+    Channel.generate()
+
+
+def generate_fake_data(user_count=1000):
+    User.generate_fake(user_count)
