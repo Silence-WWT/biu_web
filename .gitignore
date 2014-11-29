@@ -58,3 +58,10 @@ target/
 
 .idea/
 images/
+
+avatars.txt
+avatars/
+images.txt
+tucao/
+
+*.sql

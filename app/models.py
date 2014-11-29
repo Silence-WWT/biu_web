@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from random import randint, seed
+from random import randint, seed, random, randrange
 
 from flask import current_app
 from flask.ext.login import UserMixin
@@ -96,6 +96,29 @@ class User(UserMixin, db.Model):
             return Fan.query.filter_by(idol_id=self.id, is_deleted=False).order_by(-Fan.created). \
                 paginate(page, per_page, False).items
 
+    @staticmethod
+    def generate_fake(count=1000):
+        from faker import Factory
+        fake = Factory.create()
+        zh = Factory.create('zh-CN')
+        with open('avatars.txt', 'r') as f:
+            avatars = f.readlines()
+        avatar_count = len(avatars)
+        for i in range(1, count + 1):
+            random_index = randrange(0, avatar_count)
+            u = User(
+                # id=User.get_random_id(),
+                nickname=fake.user_name(),
+                mobile=zh.phone_number(),
+                password='123456',
+                identity=fake.password(64),
+                golds=fake.random_int(),
+                signature=fake.sentence(),
+                avatar=avatars[random_index]
+            )
+            db.session.add(u)
+        db.session.commit()
+
 
 class Fan(db.Model):
     __tablename__ = 'fans'
@@ -110,6 +133,20 @@ class Fan(db.Model):
             return User.query.get(self.idol_id)
         else:
             return User.query.get(self.user_id)
+
+    @staticmethod
+    def generate_fake(count):
+        user_count = User.query.count()
+        for i in range(1, user_count + 1):
+            random_count = randrange(0, count + 1)
+            user_set = set()
+            for j in range(random_count):
+                rand = randrange(1, user_count + 1)
+                if rand != i:
+                    user_set.add(rand)
+            for j in user_set:
+                db.session.add(Fan(user_id=i, idol_id=j))
+            db.session.commit()
 
 
 class Collection(db.Model):
@@ -153,6 +190,22 @@ class Post(db.Model):
             'image': current_app.config['STATIC_URL'] + self.image
         }
 
+    @staticmethod
+    def generate_fake(count):
+        from faker import Factory
+        fake = Factory.create()
+        user_count = User.query.count()
+        with open('images.txt', 'r') as f:
+            images = f.readlines()
+        image_count = len(images)
+        for i in range(1, user_count + 1):
+            random_count = randrange(0, count + 1)
+            for j in range(random_count):
+                random_index = randrange(0, image_count)
+                db.session.add(Post(user_id=i, image=images[random_index],
+                                    content=fake.sentence(), channel_id=randint(3, 7)))
+            db.session.commit()
+
 
 class PostLike(db.Model):
     __tablename__ = 'post_likes'
@@ -170,6 +223,19 @@ class PostLike(db.Model):
 
     def get_post(self):
         return Post.query.get(self.post_id)
+
+    @staticmethod
+    def generate_fake(count):
+        post_count = Post.query.count()
+        user_count = User.query.count()
+        for i in range(1, user_count + 1):
+            random_count = randrange(0, count + 1)
+            post_set = set()
+            for j in range(random_count):
+                post_set.add(randrange(1, post_count + 1))
+            for j in post_set:
+                db.session.add(PostLike(user_id=i, post_id=j))
+            db.session.commit()
 
 
 class PostReport(db.Model):
@@ -222,6 +288,21 @@ class PostComment(db.Model):
         elif not self.is_deleted and reports_count >= 10:
             self.is_deleted = True
         return self.is_deleted
+
+    @staticmethod
+    def generate_fake(count):
+        from faker import Factory
+        fake = Factory.create()
+        post_count = Post.query.count()
+        user_count = User.query.count()
+        for i in range(1, user_count + 1):
+            random_count = randrange(0, count + 1)
+            post_set = set()
+            for j in range(random_count):
+                post_set.add(randrange(1, post_count + 1))
+            for j in post_set:
+                db.session.add(PostComment(user_id=i, post_id=j, x=random(), y=random(), content=fake.sentence()))
+            db.session.commit()
 
 
 class PostCommentLike(db.Model):
@@ -280,5 +361,9 @@ def generate_helper_data():
     Channel.generate()
 
 
-def generate_fake_data(user_count=1000):
+def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_count=100, post_comment_count=100):
     User.generate_fake(user_count)
+    Fan.generate_fake(fan_count)
+    Post.generate_fake(post_count)
+    PostLike.generate_fake(post_like_count)
+    PostComment.generate_fake(post_comment_count)
