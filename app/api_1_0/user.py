@@ -29,7 +29,7 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
-        data['user'] = user.get_user_info_dict()
+        data['user'] = user.get_self_info_dict()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:
@@ -49,7 +49,7 @@ def login():
         user.update_identity(identity)
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
-        data['user'] = user.get_user_info_dict()
+        data['user'] = user.get_self_info_dict()
     else:
         data['status'] = LOGIN_FAIL
         data['message'] = LOGIN_FAIL_MSG

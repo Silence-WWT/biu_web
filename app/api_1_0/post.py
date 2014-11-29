@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import request, jsonify, render_template_string
+from flask import request, jsonify, render_template_string, current_app
 
 from ..models import User, Post, PostLike, PostReport, PostComment, PostCommentLike, PostCommentReport, Channel
 from .import api
@@ -90,6 +90,22 @@ def post_comment():
     else:
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
+@api.route('/get_post_comments')
+def get_post_comments():
+    data = {}
+    post_id = request.values.get('post_id', '', type=str)
+    page = request.values.get('page', 1, type=int)
+    post_ = Post.query.get(post_id)
+    if post_:
+        data['comments'] = post_.get_comments_dict(page, current_app.config['COMMENTS_PER_PAGE'])
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = POST_NOT_EXIST
+        data['message'] = POST_NOT_EXIST_MSG
     return jsonify(data)
 
 

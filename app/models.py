@@ -49,7 +49,7 @@ class User(UserMixin, db.Model):
         if identity and identity != self.identity:
             self.identity = identity
 
-    def get_user_info_dict(self):
+    def get_self_info_dict(self):
         return {
             'user_id': self.id,
             'nickname': self.nickname,
@@ -189,6 +189,11 @@ class Post(db.Model):
             'channel_id': self.channel_id,
             'image': current_app.config['STATIC_URL'] + self.image
         }
+
+    def get_comments_dict(self, page, per_page):
+        comments = PostComment.query.filter_by(post_id=self.id).order_by(-PostComment.created).\
+            paginate(page, per_page, False).items
+        return [comment.get_comment_info for comment in comments]
 
     @staticmethod
     def generate_fake(count):

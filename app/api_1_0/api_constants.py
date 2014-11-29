@@ -12,6 +12,9 @@ USER_GOLDS_NOT_ENOUGH_MSG = "user's golds not enough"
 NOT_IMAGE = 1004
 NOT_IMAGE_MSG = 'not a valid image'
 
+POST_NOT_EXIST = 2000
+POST_NOT_EXIST_MSG = 'post not exist'
+
 PARAMETER_ERROR = 2000
 PARAMETER_ERROR_MSG = 'lack parameter or wrong parameter!'
 

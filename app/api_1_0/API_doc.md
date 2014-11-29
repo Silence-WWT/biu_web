@@ -184,6 +184,32 @@ post_comment
                 nickname
                 avatar
                 
+get_post_comments
+---
+    URL:
+        /api/v1.0/get_post_comments?post_id=&page=
+    method:
+        get
+    parameters:
+        post_id
+        page: default 1
+    json:
+        {"status": 0, "message": "success", "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
+            "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
+            
+        status: 0 for success, 2000 for post not exist
+        message: message of status code
+        comments: a list of comments
+            post_id
+            created
+            content
+            x
+            y
+            user: a dict of user
+                user_id
+                nickname
+                avatar
+
 like
 ---
     URL:
