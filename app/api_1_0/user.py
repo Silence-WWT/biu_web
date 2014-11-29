@@ -17,12 +17,11 @@ def register():
     mobile = request.values.get('mobile', '', type=str)
     user = User.query.filter_by(mobile=mobile).limit(1).first()
     if user:
-        data['status'] = USERNAME_EXIST
-        data['message'] = USERNAME_EXIST_MSG
+        data['status'] = MOBILE_EXIST
+        data['message'] = MOBILE_EXIST_MSG
     elif mobile and password and identity:
-        user_id = User.get_random_id()
         user = User(
-            id=user_id,
+            id=User.get_random_id(),
             nickname='',
             password=password,
             mobile=mobile,

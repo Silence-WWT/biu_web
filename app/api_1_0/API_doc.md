@@ -4,23 +4,21 @@ Biu API Doc
 register
 ---
     URL:
-        /api/v1.0/register?username=&password=&identity=&mobile=
+        /api/v1.0/register?password=&identity=&mobile=
     method:
         get
     parameters:
-        username
         password
         identity: uuid
         mobile: 后端先不检测，因为目前还没确定注册是否需要手机号……
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "username": "", "nickname": "", "mobile": "",
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "",
             "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
-        status: 0 for success, 1001 for username exists, 2000 for parameter error
+        status: 0 for success, 1001 for mobile exists, 2000 for parameter error
         message: message of status code
         user: a dict of user's info
             user_id
-            username
             nickname
             mobile
             identity
@@ -33,22 +31,22 @@ register
 login
 ---
     URL:
-        /api/v1.0/login?username=&password=&identity=
+        /api/v1.0/login?mobile=&password=&identity=
     method:
         get
     parameters:
-        username
+        mobile
         password
         identity
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
-        status: 0 for success, 1001 for username exists, 2000 for parameter error
+        status: 0 for success, 1000 for login fail, 2000 for parameter error
         message: message of status code
         user: a dict of user's info
             user_id
-            username
+            mobile
             nickname
             mobile
             identity
