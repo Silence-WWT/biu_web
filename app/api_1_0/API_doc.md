@@ -127,6 +127,44 @@ push_setting
         status: 0 for success, 1002 for user not exists
         message: message of status
         
+home_page
+---
+    URL:
+        /api/v1.0/home_page?user_id=&page=
+    method:
+        get
+    parameters:
+        user_id
+        page: default 1, page of user's posts
+    json:
+        {"status": 0, "message": "success", "followings_count": "", "followers_count": "", "posts_count": "",
+         "user": {"user_id": "", "nickname": "", "golds": "", "avatar": "", "signature": ""},
+         "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "post_id": "", "comments_count": "",
+            "user": {"avatar": "", "user_id": "", "nickname": ""}}]}
+        
+        status: 0 for success, 1002 for user not exist
+        message: message of status code
+        followings_count
+        followers_count
+        posts_count
+        user: a dict of user info
+            user_id
+            nickname
+            golds
+            avatar
+            signature
+        posts: a list of post dict
+            post_id
+            channel_id
+            content
+            created
+            image
+            comments_count
+            user: a dict of user info
+                user_id
+                nickname
+                avatar
+
 post
 ---
     URL:
@@ -140,7 +178,7 @@ post
         image
     json:
         {"status": 0, "message": "success", "post": {"channel_id": "", "content": "", "created": "", "image": "",
-            "post_id": "", "user": {"avatar": "", "user_id": "", "nickname": ""}}}
+            "comments_count": "", "post_id": "", "user": {"avatar": "", "user_id": "", "nickname": ""}}}
         
         status: 0 for success, 2000 for parameter error
         message: message of status code
@@ -150,6 +188,7 @@ post
             image
             content
             channel_id
+            comments_count
             user: a dict of user
                 user_id
                 avatar

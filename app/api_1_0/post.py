@@ -68,11 +68,11 @@ def post_comment():
     x = request.values.get('x', 0.0, type=float)
     y = request.values.get('y', 0.0, type=float)
     user = User.query.get(user_id)
-    post = Post.query.get(post_id)
+    post_ = Post.query.get(post_id)
     if not user:
         data['status'] = USER_NOT_EXIST
         data['message'] = USER_NOT_EXIST_MSG
-    elif post and not post.is_deleted and content:
+    elif post_ and not post_.is_deleted and content:
         comment = PostComment(
             post_id=post_id,
             user_id=user_id,

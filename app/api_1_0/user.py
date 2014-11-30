@@ -56,6 +56,22 @@ def login():
     return jsonify(data)
 
 
+@api.route('/home_page')
+def home_page():
+    data = {'home_page': {}}
+    user_id = request.values.get('user_id', '', type=str)
+    page = request.values.get('page', 1, type=int)
+    user = User.query.get(user_id)
+    if user:
+        data['home_page'] = user.get_home_page_dict(page)
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = USER_NOT_EXIST
+        data['message'] = USER_NOT_EXIST_MSG
+    return jsonify(data)
+
+
 @api.route('/push_setting')
 def push_setting():
     data = {}

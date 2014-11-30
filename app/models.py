@@ -49,18 +49,20 @@ class User(UserMixin, db.Model):
         if identity and identity != self.identity:
             self.identity = identity
 
-    def get_self_info_dict(self):
-        return {
+    def get_self_info_dict(self, is_self=True):
+        user_dict = {
             'user_id': self.id,
             'nickname': self.nickname,
-            'mobile': self.mobile,
-            'identity': self.identity,
             'golds': self.golds,
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
             'signature': self.signature,
-            'push': self.push,
-            'disturb': self.disturb
         }
+        if is_self:
+            user_dict['identity'] = self.identity
+            user_dict['mobile'] = self.mobile
+            user_dict['push'] = self.push
+            user_dict['disturb'] = self.disturb
+        return user_dict
 
     def get_brief_info_dict(self):
         return {
@@ -68,6 +70,21 @@ class User(UserMixin, db.Model):
             'nickname': self.nickname,
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
         }
+
+    def get_home_page_dict(self, page):
+        home_page_dict = {
+            'user': self.get_self_info_dict(False),
+            'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
+            'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
+            'posts_count': Post.query.filter_by(user_id=self.id, is_deleted=False).count(),
+            'posts': self.get_self_posts(page)
+        }
+        return home_page_dict
+
+    def get_self_posts(self, page):
+        posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(Post.created).\
+            paginate(page, current_app.config['HOME_PAGE_POSTS_PER_PAGE'], False).items
+        return [post.get_post_info_dict() for post in posts]
 
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':
@@ -187,13 +204,14 @@ class Post(db.Model):
             'content': self.content,
             'created': self.created,
             'channel_id': self.channel_id,
-            'image': current_app.config['STATIC_URL'] + self.image
+            'image': current_app.config['STATIC_URL'] + self.image,
+            'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count()
         }
 
     def get_comments_dict(self, page, per_page):
-        comments = PostComment.query.filter_by(post_id=self.id).order_by(-PostComment.created).\
+        comments = PostComment.query.filter_by(post_id=self.id, is_deleted=False).order_by(-PostComment.created).\
             paginate(page, per_page, False).items
-        return [comment.get_comment_info for comment in comments]
+        return [comment.get_comment_info() for comment in comments]
 
     @staticmethod
     def generate_fake(count):
