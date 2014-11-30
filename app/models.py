@@ -205,7 +205,9 @@ class Post(db.Model):
             'created': self.created,
             'channel_id': self.channel_id,
             'image': current_app.config['STATIC_URL'] + self.image,
-            'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count()
+            'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count(),
+            'likes_count': PostLike.query.filter_by(post_id=self.id).count(),
+            'share_count': 0  # TODO: 分享次数
         }
 
     def get_comments_dict(self, page, per_page):

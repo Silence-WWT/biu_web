@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import request, jsonify, render_template_string, current_app
 
-from ..models import User, Post, PostLike, PostReport, PostComment, PostCommentLike, PostCommentReport, Channel
-from .import api
+from ..models import User, Fan, Post, PostLike, PostReport, PostComment, PostCommentLike, PostCommentReport, Channel
+from . import api
 from app import db
 from app.utils.image import upload_image, valid_image
 from forms import PostForm
@@ -90,6 +90,55 @@ def post_comment():
     else:
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
+@api.route('/get_channels')
+def get_channels():
+    channels = Channel.query.all()
+    data = {
+        'channels': [{"channel_id": channel.id, "channel": channel.channel} for channel in channels],
+        'status': SUCCESS,
+        'message': SUCCESS_MSG
+    }
+    return jsonify(data)
+
+
+@api.route('/get_posts')
+def get_posts():
+    data = {'posts': []}
+    channel_id = request.values.get('channel_id', current_app.config['HOT_CHANNEL_ID'], type=int)
+    page = request.values.get('page', 1, type=int)
+    user_id = request.values.get('user_id', '', type=str)
+    if channel_id > 0:
+        posts = Post.query.filter_by(channel_id=channel_id, is_deleted=False).\
+            order_by(-Post.created).\
+            paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
+    elif channel_id == current_app.config['LATEST_CHANNEL_ID']:
+        posts = Post.query.filter_by(is_deleted=False).\
+            order_by(-Post.created).\
+            paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
+    elif channel_id == current_app.config['HOT_CHANNEL_ID']:
+        posts = []
+        # TODO: hot posts
+    else:
+        user = User.query.get(user_id)
+        if user:
+            followings_id = [following.idol_id for following in Fan.query.filter_by(user_id=user_id, is_deleted=False)]
+            posts = Post.query.filter(Post.user_id.in_(followings_id), Post.is_deleted is not False).\
+                order_by(Post.created).\
+                paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
+        else:
+            data['status'] = USER_NOT_EXIST
+            data['message'] = USER_NOT_EXIST_MSG
+            return jsonify(data)
+    for post_ in posts:
+        post_dict = post_.get_post_info_dict()
+        post_dict['comments'] = post_.get_comments_dict(current_app.config['FIRST_PAGE'],
+                                                        current_app.config['COMMENTS_PER_PAGE'])
+        data['posts'].append(post_dict)
+    data['status'] = SUCCESS
+    data['message'] = SUCCESS_MSG
     return jsonify(data)
 
 

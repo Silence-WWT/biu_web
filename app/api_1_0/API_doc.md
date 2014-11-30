@@ -140,6 +140,7 @@ home_page
         {"status": 0, "message": "success", "followings_count": "", "followers_count": "", "posts_count": "",
          "user": {"user_id": "", "nickname": "", "golds": "", "avatar": "", "signature": ""},
          "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "post_id": "", "comments_count": "",
+            "likes_count": "", "share_count": "",
             "user": {"avatar": "", "user_id": "", "nickname": ""}}]}
         
         status: 0 for success, 1002 for user not exist
@@ -160,6 +161,8 @@ home_page
             created
             image
             comments_count
+            likes_count
+            share_count
             user: a dict of user info
                 user_id
                 nickname
@@ -178,7 +181,8 @@ post
         image
     json:
         {"status": 0, "message": "success", "post": {"channel_id": "", "content": "", "created": "", "image": "",
-            "comments_count": "", "post_id": "", "user": {"avatar": "", "user_id": "", "nickname": ""}}}
+            "comments_count": "", "post_id": "", "likes_count": "", "share_count": "",
+            "user": {"avatar": "", "user_id": "", "nickname": ""}}}
         
         status: 0 for success, 2000 for parameter error
         message: message of status code
@@ -189,6 +193,8 @@ post
             content
             channel_id
             comments_count
+            likes_count
+            share_count
             user: a dict of user
                 user_id
                 avatar
@@ -223,6 +229,67 @@ post_comment
                 nickname
                 avatar
                 
+get_channels
+---
+    URL:
+        /api/v1.0/get_channels
+    method:
+        get
+    json:
+        {"status": 0, "message": "success", "channels": [{"channel_id": "", "channel": ""}]}
+        
+        status: 0 for success
+        message: message of status code
+        channels: a list of all channels dict
+            channel_id
+            channel: unicode name of channel
+            
+get_posts
+---
+    URL:
+        /api/v1.0/post_comment?user_id=&channel_id=&page=
+    method:
+        get
+    parameters:
+        user_id: 仅当请求关注用户的图片列表时需要使用该参数
+        channel_id: default -3. -3: 热门, -2: 最新发布, -1: 关注用户发布, >0: 正常的其他频道.
+                    为了保证将来的扩展性，我觉得第一版 channel的id与名称还是全部由服务器返回，频道的图标最好也由服务器返回（当然这个我还没实现）
+                    热门，最新发布，关注用户 不能算真正意义上的"频道"， 而且其他的频道id都是与数据库中的id刚好对应的
+        page: default 1
+    json:
+        {"status": 0, "message": "success",
+         "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "comments_count": "", "post_id": "",
+            "likes_count": "", "share_count": "",
+            "user": {"avatar": "", "user_id": "", "nickname": ""},
+            "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
+                "user": {"user_id": "", "nickname": "", "avatar": ""}}]]}
+        
+        status: 0 for success, 1002 for user not exist
+        message: message for status code
+        posts: a list of post dict
+            post_id
+            created
+            image
+            content
+            channel_id
+            comments_count
+            likes_count
+            share_count
+            user: a dict of user
+                user_id
+                avatar
+                nickname
+            comments: a list of comments dict in first page
+                post_id
+                created: 弹幕发送的时间，1970.1.1 开始的秒数
+                content
+                x
+                y
+                user: a dict of user
+                    user_id
+                    nickname
+                    avatar
+
 get_post_comments
 ---
     URL:

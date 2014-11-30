@@ -13,9 +13,14 @@ class Config:
     GOLDS_POST = 5
     GOLDS_COMMENT = 1
     GOLDS_LIKE = 2
+    FIRST_PAGE = 1
     FOLLOW_LIST_PER_PAGE = 10
+    POSTS_PER_PAGE = 10
     COMMENTS_PER_PAGE = 10
     HOME_PAGE_POSTS_PER_PAGE = 9
+    FOLLOWING_CHANNEL_ID = -1
+    LATEST_CHANNEL_ID = -2
+    HOT_CHANNEL_ID = -3
 
 
 class DevelopmentConfig(Config):
