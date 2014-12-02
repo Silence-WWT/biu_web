@@ -119,7 +119,10 @@ def get_posts():
             order_by(-Post.created).\
             paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
     elif channel_id == current_app.config['HOT_CHANNEL_ID']:
-        posts = []
+        posts = Post.query.filter_by(is_deleted=False).\
+            order_by(-Post.created).\
+            order_by(-Post.likes_count).\
+            paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
         # TODO: hot posts
     else:
         user = User.query.get(user_id)

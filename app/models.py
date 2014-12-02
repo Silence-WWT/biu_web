@@ -181,7 +181,8 @@ class Post(db.Model):
     image = db.Column(db.String(128), nullable=False)
     content = db.Column(db.Unicode(140), nullable=False)
     channel_id = db.Column(db.Integer, nullable=False)
-    is_deleted = db.Column(db.Boolean, default=False, nullable=True)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    likes_count = db.Column(db.Integer, default=0, nullable=False)
 
     def get_user(self):
         return User.query.get(self.user_id)
@@ -206,7 +207,7 @@ class Post(db.Model):
             'channel_id': self.channel_id,
             'image': current_app.config['STATIC_URL'] + self.image,
             'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count(),
-            'likes_count': PostLike.query.filter_by(post_id=self.id).count(),
+            'likes_count': self.likes_count,
             'share_count': 0  # TODO: 分享次数
         }
 
