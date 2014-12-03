@@ -374,8 +374,6 @@ class Channel(db.Model):
 
     @staticmethod
     def generate():
-        db.session.add(Channel(channel=u'热门'))
-        db.session.add(Channel(channel=u'关注'))
         db.session.add(Channel(channel=u'涨姿势'))
         db.session.add(Channel(channel=u'随手拍'))
         db.session.add(Channel(channel=u'那么问题来了'))
@@ -393,3 +391,11 @@ def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_
     Post.generate_fake(post_count)
     PostLike.generate_fake(post_like_count)
     PostComment.generate_fake(post_comment_count)
+
+
+def generate_fake_image_path():
+    with open('images.txt', 'r') as f:
+        images = [line.replace('\n', '') for line in f.readlines()]
+    posts = Post.query.all()
+    for post in posts:
+        post.image = images[randrange(0, len(images))]

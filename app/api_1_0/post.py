@@ -254,3 +254,13 @@ def up_reword():
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
     return jsonify(data)
+
+
+@api.route('/test_generate_image_path', methods=['GET', 'POST'])
+def generate_image_path():
+    image = request.files.get('image')
+    from random import randint
+    with open('images.txt', 'a') as f:
+        path = upload_image(randint(1, 1001), image)
+        f.write(path + '\n')
+    return 'ok'
