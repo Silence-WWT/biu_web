@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from flask import jsonify, request, render_template_string, current_app
+from flask import jsonify, request, current_app
 
 from app import db
 from app.models import User, Fan
-from app.utils.image import upload_image, valid_image
+from app.utils.image import upload_image
 from . import api
-from forms import PersonalInfoForm
 from api_constants import *
 
 
@@ -57,7 +56,7 @@ def login():
 
 
 @api.route('/profile')
-def home_page():
+def profile():
     data = {'profile': {}}
     user_id = request.values.get('user_id', '', type=str)
     page = request.values.get('page', 1, type=int)
@@ -93,56 +92,31 @@ def push_setting():
     return jsonify(data)
 
 
-@api.route('/personal_info_setting', methods=['GET', 'POST'])
+@api.route('/personal_info_setting')
 def personal_info_setting():
     data = {}
-    if request.method == 'POST':
-        image = request.files.get('image')
-        user_id = request.values.get('user_id', '', type=str)
-        nickname = request.values.get('nickname', u'', type=unicode)
-        signature = request.values.get('signature', u'', type=unicode)
-        user = User.query.get(user_id)
-        if user:
-            user.nickname = nickname
-            user.signature = signature
-            if image:
-                if valid_image(image.filename):
-                    user.avatar = upload_image(int(user_id), image)
-                else:
-                    data['status'] = NOT_IMAGE
-                    data['message'] = NOT_IMAGE_MSG
-                    return jsonify(data)
-            data['status'] = SUCCESS
-            data['message'] = SUCCESS_MSG
-        else:
-            data['status'] = USER_NOT_EXIST
-            data['message'] = USER_NOT_EXIST_MSG
-        return jsonify(data)
+    image_str = request.values.get('image_str', '', type=str)
+    user_id = request.values.get('user_id', '', type=str)
+    nickname = request.values.get('nickname', u'', type=unicode)
+    signature = request.values.get('signature', u'', type=unicode)
+    user = User.query.get(user_id)
+    if user:
+        if image_str:
+            avatar_path = upload_image(user.id, image_str)
+            if avatar_path:
+                user.avatar = avatar_path
+            else:
+                data['status'] = NOT_IMAGE
+                data['message'] = NOT_IMAGE_MSG
+                return jsonify(data)
+        user.nickname = nickname
+        user.signature = signature
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
     else:
-        return render_template_string(
-            """
-            <!DOCTYPE html>
-            <html>
-            <head lang="en">
-              <meta charset="UTF-8">
-            </head>
-            <body>
-              <form enctype="multipart/form-data" method="post">
-                {{ form.csrf_token }}
-                {{ form.image }}
-                user_id:
-                {{ form.user_id }}
-                nickname:
-                {{ form.nickname }}
-                signature:
-                {{ form.signature }}
-                <input type="submit">
-              </form>
-            </body>
-            </html>
-            """,
-            form=PersonalInfoForm()
-        )
+        data['status'] = USER_NOT_EXIST
+        data['message'] = USER_NOT_EXIST_MSG
+    return jsonify(data)
 
 
 @api.route('/follow')
