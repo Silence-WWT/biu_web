@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
+from redis import StrictRedis
 from random import randint, seed
 from xml.dom import minidom
 
@@ -9,7 +10,7 @@ from faker import Factory
 from app.utils.biu_hashlib import MD5
 
 seed()
-__local_redis = current_app.config['local_redis']
+__local_redis = StrictRedis(host='localhost', port=6379, db=0)
 __fake = Factory.create()
 
 
