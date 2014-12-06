@@ -11,6 +11,37 @@ from utils.time_now import time_now
 seed()
 
 
+class UnifiedUser(db.Model):
+    __tablename__ = 'unified_users'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    identity = db.Column(db.CHAR(64), nullable=False)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
+
+    @staticmethod
+    def get_unified_user(user_id, identity=''):
+        if not user_id:
+            unified_user = UnifiedUser.query.filter_by(identity=identity).limit(1).first()
+            if not unified_user:
+                unified_user = UnifiedUser(user_id='', identity=identity)
+                db.session.add(unified_user)
+                db.session.commit()
+        else:
+            user = User.query.get(user_id)
+            unified_user = UnifiedUser.query.filter_by(user_id=user_id).limit(1).first()
+            if not unified_user:
+                unified_user = UnifiedUser(user_id=user_id, identity=user.identity)
+                db.session.add(unified_user)
+                db.session.commit()
+        return unified_user
+
+    @staticmethod
+    def synchronize(user_id, identity):
+        unified_users = UnifiedUser.query.filter_by(user_id='', identity=identity)
+        for unified_user in unified_users:
+            unified_user.user_id = user_id
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -73,22 +104,22 @@ class User(UserMixin, db.Model):
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
         }
 
-    def get_profile_dict(self, page, user_id):
+    def get_profile_dict(self, page, user_id, identity):
         profile_dict = {
             'user': self.get_self_info_dict(False),
             'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
             'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
             'posts_count': Post.query.filter_by(user_id=self.id, is_deleted=False).count(),
-            'posts': self.get_self_posts(page, user_id),
+            'posts': self.get_self_posts(page, user_id, identity),
             'is_following': Fan.is_following(user_id, self.id),
             'is_followed': Fan.is_followed(self.id, user_id)
         }
         return profile_dict
 
-    def get_self_posts(self, page, user_id):
+    def get_self_posts(self, page, user_id, identity):
         posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(Post.created).\
             paginate(page, current_app.config['HOME_PAGE_POSTS_PER_PAGE'], False).items
-        return [post.get_post_info_dict(user_id) for post in posts]
+        return [post.get_post_info_dict(user_id, identity) for post in posts]
 
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':
@@ -212,7 +243,7 @@ class Post(db.Model):
             self.is_deleted = True
         return self.is_deleted
 
-    def get_post_info_dict(self, user_id=''):
+    def get_post_info_dict(self, user_id='', identity=''):
         post_dict = {
             'user': self.get_user().get_brief_info_dict(),
             'post_id': self.id,
@@ -224,9 +255,9 @@ class Post(db.Model):
             'likes_count': self.likes_count,
             'share_count': 0,  # TODO: 分享次数
         }
-        if user_id:
-            post_like = PostLike.query.filter_by(post_id=self.id, user_id=user_id).limit(1).first()
-        post_dict['is_liked'] = True if user_id and post_like else False
+        if user_id or identity:
+            post_like = PostLike.is_liked(self.id, user_id, identity)
+        post_dict['is_liked'] = True if (user_id or identity) and post_like else False
         return post_dict
 
     def get_comments_dict(self, page, per_page):
@@ -254,16 +285,18 @@ class Post(db.Model):
 class PostLike(db.Model):
     __tablename__ = 'post_likes'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
+    unified_user_id = db.Column(db.Integer, nullable=False)
     post_id = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, post_id, user_id):
+    def __init__(self, post_id, user_id, identity):
         self.post_id = post_id
-        self.user_id = user_id
+        self.unified_user_id = UnifiedUser.get_unified_user(user_id, identity).id
 
     @staticmethod
-    def is_liked(post_id, user_id):
-        return PostLike.query.filter_by(post_id=post_id, user_id=user_id).limit(1).first()
+    def is_liked(post_id, user_id, identity=''):
+        return PostLike.query.filter_by(
+            post_id=post_id, unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
+        ).limit(1).first()
 
     def get_post(self):
         return Post.query.get(self.post_id)
@@ -278,7 +311,7 @@ class PostLike(db.Model):
             for j in range(random_count):
                 post_set.add(randrange(1, post_count + 1))
             for j in post_set:
-                db.session.add(PostLike(user_id=i, post_id=j))
+                db.session.add(PostLike(user_id=i, post_id=j, identity=''))
             db.session.commit()
 
 
@@ -352,16 +385,18 @@ class PostComment(db.Model):
 class PostCommentLike(db.Model):
     __tablename__ = 'post_comment_likes'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
+    unified_user_id = db.Column(db.Integer, nullable=False)
     post_comment_id = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, post_comment_id, user_id):
+    def __init__(self, post_comment_id, user_id, identity):
         self.post_comment_id = post_comment_id
-        self.user_id = user_id
+        self.unified_user_id = UnifiedUser.get_unified_user(user_id, identity).id
 
     @staticmethod
-    def is_liked(post_comment_id, user_id):
-        return PostCommentLike.query.filter_by(post_comment_id=post_comment_id, user_id=user_id).limit(1).first()
+    def is_liked(post_comment_id, user_id, identity=''):
+        return PostCommentLike.query.filter_by(
+            post_comment_id=post_comment_id, unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
+        ).limit(1).first()
 
     def get_post(self):
         return Post.query.get(self.post_id)

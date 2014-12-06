@@ -87,6 +87,7 @@ def get_posts():
     channel_id = request.values.get('channel_id', current_app.config['HOT_CHANNEL_ID'], type=int)
     page = request.values.get('page', 1, type=int)
     user_id = request.values.get('user_id', '', type=str)
+    identity = request.values.get('identity', '', type=str)
     if channel_id > 0:
         posts = Post.query.filter_by(channel_id=channel_id, is_deleted=False).\
             order_by(-Post.created).\
@@ -113,7 +114,7 @@ def get_posts():
             data['message'] = USER_NOT_EXIST_MSG
             return jsonify(data)
     for post_ in posts:
-        post_dict = post_.get_post_info_dict(user_id)
+        post_dict = post_.get_post_info_dict(user_id, identity)
         post_dict['comments'] = post_.get_comments_dict(current_app.config['FIRST_PAGE'],
                                                         current_app.config['COMMENTS_PER_PAGE'])
         data['posts'].append(post_dict)
@@ -145,10 +146,17 @@ def like():
     user_id = request.values.get('user_id', '', type=str)
     type_ = request.values.get('type', '', type=str)
     cancel = request.values.get('cancel', 0, type=int)
-    if type_ == 'post':
+    identity = request.values.get('identity', '', type=str)
+    user = User.query.get(user_id)
+
+    if not (user or identity):
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+        return jsonify(data)
+    elif type_ == 'post' and (user or identity):
         target = Post.query.get(target_id)
         target_class = PostLike
-    elif type_ == 'post_comment':
+    elif type_ == 'post_comment' and (user or identity):
         target = PostComment.query.get(target_id)
         target_class = PostCommentLike
     else:
@@ -156,15 +164,16 @@ def like():
         data['message'] = PARAMETER_ERROR_MSG
         return jsonify(data)
 
-    user = User.query.get(user_id)
-    if target and user:
-        target_like = target_class.is_liked(target_id, user_id)
+    if target and (user or identity):
+        target_like = target_class.is_liked(target_id, user_id, identity)
         if not cancel and not target_like:
-            target_like = target_class(target_id, user_id)
+            target_like = target_class(target_id, user_id, identity)
             db.session.add(target_like)
             db.session.commit()
             target_like.get_post().get_user().add_golds('like')
-            # TODO: 点赞推送
+            if user:
+                pass
+                # TODO: 点赞推送
         elif cancel and target_like:
             db.session.delete(target_like)
             db.session.commit()
