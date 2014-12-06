@@ -172,12 +172,13 @@ push_setting
 profile
 ---
     URL:
-        /api/v1.0/profile?user_id=&page=
+        /api/v1.0/profile?user_id=&page=&identity=
     method:
         get
     parameters:
         user_id
         page: default 1, page of user's posts
+        identity: 用户未登录需要提交identity
     json:
         {"status": 0, "message": "success", "profile": {"followings_count": "", "followers_count": "", "is_followed": "",
              "is_following": "", "posts_count": "", "likes_count": "", "share_count": "",
@@ -297,11 +298,12 @@ get_channels
 get_posts
 ---
     URL:
-        /api/v1.0/get_posts?user_id=&channel_id=&page=
+        /api/v1.0/get_posts?user_id=&channel_id=&page=&identity=
     method:
         get
     parameters:
-        user_id: 仅当请求关注用户的图片列表时需要使用该参数
+        user_id
+        identity: 用户未登录需要提交identity
         channel_id: default -3. -3: 热门, -2: 最新发布, -1: 关注用户发布, >0: 正常的其他频道.
                     为了保证将来的扩展性，我觉得第一版 channel的id与名称还是全部由服务器返回，频道的图标最好也由服务器返回（当然这个我还没实现）
                     热门，最新发布，关注用户 不能算真正意义上的"频道"， 而且其他的频道id都是与数据库中的id刚好对应的
@@ -372,11 +374,12 @@ get_post_comments
 like
 ---
     URL:
-        /api/v1.0/like?user_id=&target_id=&cancel=&type=
+        /api/v1.0/like?user_id=&target_id=&cancel=&type=&identity=
     method:
         get
     parameters:
         user_id
+        identity: user_id identity 至少需要一个，若用户已登录，可不传identity
         target_id: 图片或弹幕的id, 因为点赞的机制基本相同，所以就使用同一个接口了……
         cancel: 是否取消, 默认为0
         type: "post" OR "post_comment"
