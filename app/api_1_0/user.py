@@ -89,10 +89,12 @@ def login():
 def profile():
     data = {'profile': {}}
     user_id = request.values.get('user_id', '', type=str)
+    target_id = request.values.get('target_id', '', type=str)
     page = request.values.get('page', 1, type=int)
     user = User.query.get(user_id)
-    if user:
-        data['profile'] = user.get_profile_dict(page)
+    target = User.query.get(target_id)
+    if user and target:
+        data['profile'] = target.get_profile_dict(page, user_id)
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:
@@ -194,10 +196,9 @@ def follow_list():
         data['message'] = PARAMETER_ERROR_MSG
         return jsonify(data)
     for follow_ in follows:
-        fan = Fan.query.filter_by(user_id=user_id, idol_id=follow_.idol_id, is_deleted=False).limit(1).first()
-        followed = True if fan else False
         follow_dict = follow_.get_user_or_idol(following).get_brief_info_dict()
-        follow_dict['followed'] = followed
+        follow_dict['is_followed'] = Fan.is_followed(target_id, user_id)
+        follow_dict['is_following'] = Fan.is_following(user_id, target_id)
         data['follows'].append(follow_dict)
     data['status'] = SUCCESS
     data['message'] = SUCCESS_MSG

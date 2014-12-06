@@ -119,7 +119,8 @@ follow_list
         following: default 1, 1 for 粉丝列表， 0 for 被关注的列表
         page: default 1
     json:
-        {"status": 0, "message": "success", "follows": [{"user_id": "", "nickname": "", "avatar": "", "followed": ""]}
+        {"status": 0, "message": "success", "follows": [{"user_id": "", "nickname": "", "avatar": "",
+            "is_followed": "", "is_following": ""]}
         
         status: int, 0 for success, 2000 for parameters error
         message: str, message of status code
@@ -127,7 +128,8 @@ follow_list
             user_id: int
             nickname: unicode
             avatar: str
-            followed: 调用这个接口的用户是否已关注该用户 bool
+            is_followed: 调用这个接口的用户是否已被该用户关注 bool
+            is_following: 调用这个接口的用户是否已关注该用户 bool
 
 
 personal_info_setting
@@ -175,11 +177,11 @@ profile
         user_id
         page: default 1, page of user's posts
     json:
-        {"status": 0, "message": "success", "profile": {"followings_count": "", "followers_count": "",
-            "posts_count": "", "user": {"user_id": "", "nickname": "", "golds": "", "avatar": "", "signature": ""},
-         "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "post_id": "", "comments_count": "",
-            "likes_count": "", "share_count": "",
-            "user": {"avatar": "", "user_id": "", "nickname": ""}}]}}
+        {"status": 0, "message": "success", "profile": {"followings_count": "", "followers_count": "", "is_followed": "",
+             "is_following": "", "posts_count": "", "likes_count": "", "share_count": "",
+             "user": {"user_id": "", "nickname": "", "golds": "", "avatar": "", "signature": ""},
+             "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "post_id": "", "comments_count": "", 
+                "is_liked": "", "user": {"avatar": "", "user_id": "", "nickname": ""}}]}}
         
         status: int, 0 for success, 1002 for user not exist
         message: str, message of status code
@@ -187,6 +189,8 @@ profile
             followings_count: int
             followers_count: int
             posts_count: int
+            is_followed: 调用这个接口的用户是否已被该用户关注 bool
+            is_following: 调用这个接口的用户是否已关注该用户 bool
             user: a dict of user info
                 user_id: int
                 nickname: unicode
@@ -202,6 +206,7 @@ profile
                 comments_count
                 likes_count: int
                 share_count: int
+                is_liked: bool
                 user: a dict of user info
                     user_id: int
                     nickname: unicode
@@ -302,7 +307,7 @@ get_posts
     json:
         {"status": 0, "message": "success",
          "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "comments_count": "", "post_id": "",
-            "likes_count": "", "share_count": "",
+            "likes_count": "", "share_count": "", "is_liked": "",
             "user": {"avatar": "", "user_id": "", "nickname": ""},
             "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
                 "user": {"user_id": "", "nickname": "", "avatar": ""}}]]}
@@ -318,6 +323,7 @@ get_posts
             comments_count: int
             likes_count: int
             share_count: int
+            is_liked: bool
             user: a dict of user
                 user_id: int
                 avatar: str

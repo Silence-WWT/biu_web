@@ -71,20 +71,22 @@ class User(UserMixin, db.Model):
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
         }
 
-    def get_profile_dict(self, page):
+    def get_profile_dict(self, page, user_id):
         profile_dict = {
             'user': self.get_self_info_dict(False),
             'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
             'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
             'posts_count': Post.query.filter_by(user_id=self.id, is_deleted=False).count(),
-            'posts': self.get_self_posts(page)
+            'posts': self.get_self_posts(page, user_id),
+            'is_following': Fan.is_following(user_id, self.id),
+            'is_followed': Fan.is_followed(self.id, user_id)
         }
         return profile_dict
 
-    def get_self_posts(self, page):
+    def get_self_posts(self, page, user_id):
         posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(Post.created).\
             paginate(page, current_app.config['HOME_PAGE_POSTS_PER_PAGE'], False).items
-        return [post.get_post_info_dict() for post in posts]
+        return [post.get_post_info_dict(user_id) for post in posts]
 
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':
@@ -152,6 +154,16 @@ class Fan(db.Model):
             return User.query.get(self.user_id)
 
     @staticmethod
+    def is_following(user_id, idol_id):
+        fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id, is_deleted=False).limit(1).first()
+        return True if fan else False
+
+    @staticmethod
+    def is_followed(user_id, idol_id):
+        fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id, is_deleted=False).limit(1).first()
+        return True if fan else False
+
+    @staticmethod
     def generate_fake(count):
         user_count = User.query.count()
         for i in range(1, user_count + 1):
@@ -198,8 +210,8 @@ class Post(db.Model):
             self.is_deleted = True
         return self.is_deleted
 
-    def get_post_info_dict(self):
-        return {
+    def get_post_info_dict(self, user_id=''):
+        post_dict = {
             'user': self.get_user().get_brief_info_dict(),
             'post_id': self.id,
             'content': self.content,
@@ -208,8 +220,12 @@ class Post(db.Model):
             'image': current_app.config['STATIC_URL'] + self.image,
             'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count(),
             'likes_count': self.likes_count,
-            'share_count': 0  # TODO: 分享次数
+            'share_count': 0,  # TODO: 分享次数
         }
+        if user_id:
+            post_like = PostLike.query.filter_by(post_id=self.id, user_id=user_id).limit(1).first()
+        post_dict['is_liked'] = True if user_id and post_like else False
+        return post_dict
 
     def get_comments_dict(self, page, per_page):
         comments = PostComment.query.filter_by(post_id=self.id, is_deleted=False).order_by(-PostComment.created).\

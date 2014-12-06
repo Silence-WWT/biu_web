@@ -113,7 +113,7 @@ def get_posts():
             data['message'] = USER_NOT_EXIST_MSG
             return jsonify(data)
     for post_ in posts:
-        post_dict = post_.get_post_info_dict()
+        post_dict = post_.get_post_info_dict(user_id)
         post_dict['comments'] = post_.get_comments_dict(current_app.config['FIRST_PAGE'],
                                                         current_app.config['COMMENTS_PER_PAGE'])
         data['posts'].append(post_dict)
