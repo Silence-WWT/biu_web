@@ -4,6 +4,7 @@ from flask import jsonify, request, current_app
 from app import db
 from app.models import User, Fan
 from app.utils.image import upload_image
+from app.utils.sex import sex_isvalid
 from app.utils.verification import sms_captcha, redis_check, third_party_token
 from . import api
 from api_constants import *
@@ -41,6 +42,7 @@ def register():
     identity = request.values.get('identity', '', type=str)
     mobile = request.values.get('mobile', '', type=str)
     captcha = request.values.get('captcha', '', type=str)
+    sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
     user = User.query.filter_by(mobile=mobile).limit(1).first()
     if user:
         data['status'] = MOBILE_EXIST
@@ -48,13 +50,14 @@ def register():
     elif not redis_check('captcha', mobile, captcha):
         data['status'] = CAPTCHA_INCORRECT
         data['message'] = CAPTCHA_INCORRECT_MSG
-    elif mobile and password and identity:
+    elif mobile and password and identity and sex_isvalid(sex):
         user = User(
             id=User.get_random_id(),
             nickname='',
             password=password,
             mobile=mobile,
             identity=identity,
+            sex=sex
         )
         db.session.add(user)
         db.session.commit()
@@ -131,8 +134,9 @@ def personal_info_setting():
     user_id = request.values.get('user_id', '', type=str)
     nickname = request.values.get('nickname', u'', type=unicode)
     signature = request.values.get('signature', u'', type=unicode)
+    sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
     user = User.query.get(user_id)
-    if user:
+    if user and sex_isvalid(sex):
         if image_str:
             avatar_path = upload_image(user.id, image_str)
             if avatar_path:
@@ -143,6 +147,7 @@ def personal_info_setting():
                 return jsonify(data)
         user.nickname = nickname
         user.signature = signature
+        user.sex = sex
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:

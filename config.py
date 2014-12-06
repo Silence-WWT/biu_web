@@ -23,6 +23,9 @@ class Config:
     FOLLOWING_CHANNEL_ID = -1
     LATEST_CHANNEL_ID = -2
     HOT_CHANNEL_ID = -3
+    SEX_FEMALE = 0
+    SEX_MALE = 1
+    SEX_UNKNOWN = 2
 
 
 class DevelopmentConfig(Config):

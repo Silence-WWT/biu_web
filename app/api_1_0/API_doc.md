@@ -35,7 +35,7 @@ confirm_mobile
 register
 ---
     URL:
-        /api/v1.0/register?password=&identity=&mobile=&captcha=
+        /api/v1.0/register?password=&identity=&mobile=&captcha=&sex=
     method:
         get
     parameters:
@@ -43,9 +43,10 @@ register
         identity: uuid
         mobile: 必须
         captcha
+        sex: 0 for female, 1 for male, 2 for unknown
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "",
-            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
+            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": ""}}
             
         status: int, 0 for success, 1001 for mobile exists, 2000 for parameter error, 1005 for captcha incorrect
         message: str, message of status code
@@ -59,6 +60,7 @@ register
             signature: 个人签名 unicode
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
+            sex: 0 for female, 1 for male, 2 for unknown. int
             
 
 login
@@ -73,7 +75,7 @@ login
         identity
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
-            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
+            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": ""}}
             
         status: int, 0 for success, 1000 for login fail, 2000 for parameter error
         message: str, message of status code
@@ -88,6 +90,7 @@ login
             signature: 个人签名 unicode
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
+            sex: 0 for female, 1 for male, 2 for unknown
 
 
 follow
@@ -135,14 +138,15 @@ follow_list
 personal_info_setting
 ---
     URL:
-        /api/v1.0/personal_info_setting    目前暂时在浏览器里用get方式直接打开可以上传图片
+        /api/v1.0/personal_info_setting?user_id=&image_str=&nickname=&signature=&sex=
     method:
         get
     parameters:
         user_id
         image_str: base64 string 如果用户没有更换头像，可以为空
-        nickname: 无论用户是否重新设置了昵称和签名，每次调用接口都必须发送当前的昵称和签名
+        nickname: 无论用户是否重新设置了昵称和签名，每次调用接口都必须发送当前的昵称、签名和性别
         signature
+        sex: 0 for female, 1 for male, 2 for unknown
     json:
         {"status": 0, "message": "success"}
         

@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     nickname = db.Column(db.Unicode(10), nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
+    sex = db.Column(db.SmallInteger, default=current_app.config['SEX_UNKNOWN'], nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     mobile = db.Column(db.CHAR(11), nullable=False)
     identity = db.Column(db.String(64), nullable=False)
@@ -56,6 +57,7 @@ class User(UserMixin, db.Model):
             'golds': self.golds,
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
             'signature': self.signature,
+            'sex': self.sex
         }
         if is_self:
             user_dict['identity'] = self.identity
