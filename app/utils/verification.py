@@ -55,5 +55,3 @@ def __send_sms(number, content):
         return False
     else:
         return True
-
-print __redis_get('token', '1')
