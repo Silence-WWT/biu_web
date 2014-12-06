@@ -16,7 +16,10 @@ __fake = Factory.create()
 
 def redis_check(type_, content, value):
     if type_ == 'token':
-        return MD5.check_md5(__local_redis.get('third_party_token:' + content), value)
+        token = __local_redis.get('third_party_token:' + content)
+        if not token:
+            return False
+        return MD5.check_md5(token, value)
     elif type_ == 'captcha':
         return value == __local_redis.get('sms_captcha:' + content)
     return False
