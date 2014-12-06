@@ -15,19 +15,20 @@ register
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "",
             "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
-        status: 0 for success, 1001 for mobile exists, 2000 for parameter error
-        message: message of status code
+        status: int, 0 for success, 1001 for mobile exists, 2000 for parameter error
+        message: str, message of status code
         user: a dict of user's info
-            user_id
-            nickname
-            mobile
-            identity
-            golds: 金币
-            avatar: 头像
-            signature: 个人签名
-            push: 是否推送消息
-            disturb: 夜间是否推送消息
+            user_id: int
+            nickname: unicode
+            mobile: str
+            identity: str
+            golds: 金币 int
+            avatar: 头像 str
+            signature: 个人签名 unicode
+            push: 是否推送消息 bool
+            disturb: 夜间是否推送消息 bool
             
+
 login
 ---
     URL:
@@ -42,19 +43,20 @@ login
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
-        status: 0 for success, 1000 for login fail, 2000 for parameter error
-        message: message of status code
+        status: int, 0 for success, 1000 for login fail, 2000 for parameter error
+        message: str, message of status code
         user: a dict of user's info
-            user_id
-            mobile
-            nickname
-            mobile
-            identity
-            golds: 金币
-            avatar: 头像
-            signature: 个人签名
-            push: 是否推送消息
-            disturb: 夜间是否推送消息
+            user_id: int
+            mobile: str
+            nickname: unicode
+            mobile: str
+            identity: str
+            golds: 金币 int
+            avatar: 头像 int
+            signature: 个人签名 unicode
+            push: 是否推送消息 bool
+            disturb: 夜间是否推送消息 bool
+
 
 follow
 ---
@@ -69,8 +71,9 @@ follow
     json:
         {"status": 0, "message": "success"}
         
-        status: 0 for success, 2000 for parameters error
-        message: message of status code
+        status: int, 0 for success, 2000 for parameters error
+        message: str, message of status code
+
 
 follow_list
 ---
@@ -86,13 +89,14 @@ follow_list
     json:
         {"status": 0, "message": "success", "follows": [{"user_id": "", "nickname": "", "avatar": "", "followed": ""]}
         
-        status: 0 for success, 2000 for parameters error
-        message: message of status code
+        status: int, 0 for success, 2000 for parameters error
+        message: str, message of status code
         follows: a list of users
-            user_id
-            nickname
-            avatar
-            followed: 调用这个接口的用户是否已关注该用户
+            user_id: int
+            nickname: unicode
+            avatar: str
+            followed: 调用这个接口的用户是否已关注该用户 bool
+
 
 personal_info_setting
 ---
@@ -108,8 +112,9 @@ personal_info_setting
     json:
         {"status": 0, "message": "success"}
         
-        status: 0 for success, 1004 for valid image, 1002 for user not exists
-        message: message of status code
+        status: int, 0 for success, 1004 for invalid image, 1002 for user not exists
+        message: str, message of status code
+        
         
 push_setting
 ---
@@ -124,49 +129,52 @@ push_setting
     json:
         {"status": 0, "message": ""}
         
-        status: 0 for success, 1002 for user not exists
-        message: message of status
+        status: int, 0 for success, 1002 for user not exists
+        message: str, message of status
         
-home_page
+        
+profile
 ---
     URL:
-        /api/v1.0/home_page?user_id=&page=
+        /api/v1.0/profile?user_id=&page=
     method:
         get
     parameters:
         user_id
         page: default 1, page of user's posts
     json:
-        {"status": 0, "message": "success", "followings_count": "", "followers_count": "", "posts_count": "",
-         "user": {"user_id": "", "nickname": "", "golds": "", "avatar": "", "signature": ""},
+        {"status": 0, "message": "success", "profile": {"followings_count": "", "followers_count": "",
+            "posts_count": "", "user": {"user_id": "", "nickname": "", "golds": "", "avatar": "", "signature": ""},
          "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "post_id": "", "comments_count": "",
             "likes_count": "", "share_count": "",
-            "user": {"avatar": "", "user_id": "", "nickname": ""}}]}
+            "user": {"avatar": "", "user_id": "", "nickname": ""}}]}}
         
-        status: 0 for success, 1002 for user not exist
-        message: message of status code
-        followings_count
-        followers_count
-        posts_count
-        user: a dict of user info
-            user_id
-            nickname
-            golds
-            avatar
-            signature
-        posts: a list of post dict
-            post_id
-            channel_id
-            content
-            created
-            image
-            comments_count
-            likes_count
-            share_count
+        status: int, 0 for success, 1002 for user not exist
+        message: str, message of status code
+        profile: a dict of user's profile
+            followings_count: int
+            followers_count: int
+            posts_count: int
             user: a dict of user info
-                user_id
-                nickname
-                avatar
+                user_id: int
+                nickname: unicode
+                golds: int
+                avatar: str
+                signature
+            posts: a list of post dict
+                post_id: int
+                channel_id: int
+                content: unicode
+                created: int
+                image: str
+                comments_count
+                likes_count: int
+                share_count: int
+                user: a dict of user info
+                    user_id: int
+                    nickname: unicode
+                    avatar: str
+
 
 post
 ---
@@ -184,21 +192,22 @@ post
             "comments_count": "", "post_id": "", "likes_count": "", "share_count": "",
             "user": {"avatar": "", "user_id": "", "nickname": ""}}}
         
-        status: 0 for success, 2000 for parameter error
-        message: message of status code
+        status: int, 0 for success, 2000 for parameter error
+        message: str, message of status code
         post: a dict of post
-            post_id
-            created
-            image
-            content
-            channel_id
+            post_id: int
+            created: int
+            image: str
+            content: unicode
+            channel_id: int
             comments_count
-            likes_count
-            share_count
+            likes_count: int
+            share_count: int
             user: a dict of user
-                user_id
-                avatar
-                nickname
+                user_id: int
+                avatar: str
+                nickname: unicode
+        
         
 post_comment
 ---
@@ -216,18 +225,19 @@ post_comment
         {"status": 0, "message": "", "post_comment": {"post_id": "", "created": "", "content": "", "x": "", "y": "",
             "user": {"user_id": "", "nickname": "", "avatar": ""}}}
         
-        status: 0 for success, 1002 for user not exists, 2000 for parameter error
-        message: message of status
+        status: int, 0 for success, 1002 for user not exists, 2000 for parameter error
+        message: str, message of status
         post_comment: a dict of comment
-            post_id
+            post_id: int
             created: 弹幕发送的时间，1970.1.1 开始的秒数
-            content
-            x
-            y
+            content: unicode
+            x: float
+            y: float
             user: a dict of user
-                user_id
-                nickname
-                avatar
+                user_id: int
+                nickname: unicode
+                avatar: str
+                
                 
 get_channels
 ---
@@ -238,11 +248,12 @@ get_channels
     json:
         {"status": 0, "message": "success", "channels": [{"channel_id": "", "channel": ""}]}
         
-        status: 0 for success
-        message: message of status code
+        status: int, 0 for success
+        message: str, message of status code
         channels: a list of all channels dict
-            channel_id
+            channel_id: int
             channel: unicode name of channel
+            
             
 get_posts
 ---
@@ -264,31 +275,32 @@ get_posts
             "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
                 "user": {"user_id": "", "nickname": "", "avatar": ""}}]]}
         
-        status: 0 for success, 1002 for user not exist
-        message: message for status code
+        status: int, 0 for success, 1002 for user not exist
+        message: str, message for status code
         posts: a list of post dict
-            post_id
-            created
-            image
-            content
-            channel_id
-            comments_count
-            likes_count
-            share_count
+            post_id: int
+            created: int
+            image: str
+            content: unicode
+            channel_id: int
+            comments_count: int
+            likes_count: int
+            share_count: int
             user: a dict of user
-                user_id
-                avatar
-                nickname
+                user_id: int
+                avatar: str
+                nickname: unicode
             comments: a list of comments dict in first page
-                post_id
-                created: 弹幕发送的时间，1970.1.1 开始的秒数
-                content
-                x
-                y
+                post_id: int
+                created: 弹幕发送的时间，1970.1.1 开始的秒数  int
+                content: unicode
+                x: float
+                y: float
                 user: a dict of user
-                    user_id
-                    nickname
-                    avatar
+                    user_id: int
+                    nickname: unicode
+                    avatar:: str
+
 
 get_post_comments
 ---
@@ -303,18 +315,19 @@ get_post_comments
         {"status": 0, "message": "success", "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
             "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
             
-        status: 0 for success, 2000 for post not exist
-        message: message of status code
+        status: int, 0 for success, 2000 for post not exist
+        message: str, message of status code
         comments: a list of comments
-            post_id
-            created
-            content
-            x
-            y
+            post_id: int
+            created: int
+            content: unicode
+            x: float
+            y: float
             user: a dict of user
-                user_id
-                nickname
-                avatar
+                user_id: int
+                nickname: unicode
+                avatar: str
+
 
 like
 ---
@@ -330,8 +343,9 @@ like
     json:
         {"status": 0, "message": ""}
         
-        status: 0 for success, 2000 for parameter error
-        message: message of status
+        status: int, 0 for success, 2000 for parameter error
+        message: str, message of status
+        
         
 report
 ---
@@ -346,8 +360,9 @@ report
     json:
         {"status": 0, "message": ""}
         
-        status: 0 for success, 2000 for parameter error
-        message: message of status
+        status: int, 0 for success, 2000 for parameter error
+        message: str, message of status
+
 
 up_reword
 ---
@@ -362,6 +377,6 @@ up_reword
     json:
         {"status": 0, "message": "success"}
         
-        status: 0 for success, 1003 for user's golds not enough, 2000 for parameter error
-        message: message for status code
+        status: int, 0 for success, 1003 for user's golds not enough, 2000 for parameter error
+        message: str, message for status code
         

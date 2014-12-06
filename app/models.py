@@ -71,15 +71,15 @@ class User(UserMixin, db.Model):
             'avatar': current_app.config['STATIC_URL'] + self.avatar,
         }
 
-    def get_home_page_dict(self, page):
-        home_page_dict = {
+    def get_profile_dict(self, page):
+        profile_dict = {
             'user': self.get_self_info_dict(False),
             'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
             'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
             'posts_count': Post.query.filter_by(user_id=self.id, is_deleted=False).count(),
             'posts': self.get_self_posts(page)
         }
-        return home_page_dict
+        return profile_dict
 
     def get_self_posts(self, page):
         posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(Post.created).\
