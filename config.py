@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import redis
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -7,6 +8,7 @@ class Config:
     # TODO: add a random string as the default SECRET_KEY.
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
     DEBUG = True
     IMAGE_DIR = '/home/silence/Python/Biu/images/'
     STATIC_URL = 'http://127.0.0.1:5000/images/'

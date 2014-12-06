@@ -1,21 +1,53 @@
 Biu API Doc
 ===
 
+
+third_party_token
+---
+    第三方登录前必须先调用这个接口获取token, 第三方登录时, 再将根据MD5加密过的token返回
+    URL:
+        /api/v1.0/third_party_token?identity=
+    method:
+        get
+    parameters:
+        identity: uuid
+    json:
+        {"status": 0, "message": "success", "token": ""}
+        
+        status: int, 0 for success, 2001 for message confirm fail
+        message: str, message of status code
+        token: str
+
+
+confirm_mobile
+---
+    URL:
+        /api/v1.0/confirm_mobile
+    method:
+        get
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: int, 0 for success, 2001 for message confirm fail
+        message: str, message of status code
+        
+
 register
 ---
     URL:
-        /api/v1.0/register?password=&identity=&mobile=
+        /api/v1.0/register?password=&identity=&mobile=&captcha=
     method:
         get
     parameters:
         password
         identity: uuid
-        mobile: 后端先不检测，因为目前还没确定注册是否需要手机号……
+        mobile: 必须
+        captcha
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "",
             "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
-        status: int, 0 for success, 1001 for mobile exists, 2000 for parameter error
+        status: int, 0 for success, 1001 for mobile exists, 2000 for parameter error, 1005 for captcha incorrect
         message: str, message of status code
         user: a dict of user's info
             user_id: int

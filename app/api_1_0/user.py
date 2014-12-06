@@ -4,8 +4,34 @@ from flask import jsonify, request, current_app
 from app import db
 from app.models import User, Fan
 from app.utils.image import upload_image
+from app.utils.verification import sms_captcha, redis_check, third_party_token
 from . import api
 from api_constants import *
+
+
+@api.route('/third_party_token')
+def third_party_token():
+    identity = request.values.get('identity', '', type=str)
+    data = {
+        'token': third_party_token(identity),
+        'status': SUCCESS,
+        'message': SUCCESS_MSG
+    }
+    return jsonify(data)
+
+
+@api.route('/confirm_mobile')
+def confirm_mobile():
+    data = {}
+    mobile = request.values.get('mobile', '', type=str)
+    status = sms_captcha(mobile)
+    if status:
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = MESSAGE_CONFIRM_FAIL
+        data['message'] = MESSAGE_CONFIRM_FAIL_MSG
+    return jsonify(data)
 
 
 @api.route('/register')
@@ -14,10 +40,14 @@ def register():
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
     mobile = request.values.get('mobile', '', type=str)
+    captcha = request.values.get('captcha', '', type=str)
     user = User.query.filter_by(mobile=mobile).limit(1).first()
     if user:
         data['status'] = MOBILE_EXIST
         data['message'] = MOBILE_EXIST_MSG
+    elif not redis_check('captcha', mobile, captcha):
+        data['status'] = CAPTCHA_INCORRECT
+        data['message'] = CAPTCHA_INCORRECT_MSG
     elif mobile and password and identity:
         user = User(
             id=User.get_random_id(),
