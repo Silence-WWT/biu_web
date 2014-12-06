@@ -35,7 +35,7 @@ confirm_mobile
 register
 ---
     URL:
-        /api/v1.0/register?password=&identity=&mobile=&captcha=&sex=
+        /api/v1.0/register?password=&identity=&mobile=&captcha=
     method:
         get
     parameters:
@@ -43,10 +43,9 @@ register
         identity: uuid
         mobile: 必须
         captcha
-        sex: 0 for female, 1 for male, 2 for unknown
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "",
-            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": ""}}
+            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
             
         status: int, 0 for success, 1001 for mobile exists, 2000 for parameter error, 1005 for captcha incorrect
         message: str, message of status code
@@ -60,7 +59,6 @@ register
             signature: 个人签名 unicode
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
-            sex: 0 for female, 1 for male, 2 for unknown. int
             
 
 login

@@ -42,7 +42,6 @@ def register():
     identity = request.values.get('identity', '', type=str)
     mobile = request.values.get('mobile', '', type=str)
     captcha = request.values.get('captcha', '', type=str)
-    sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
     user = User.query.filter_by(mobile=mobile).limit(1).first()
     if user:
         data['status'] = MOBILE_EXIST
@@ -50,14 +49,13 @@ def register():
     elif not redis_check('captcha', mobile, captcha):
         data['status'] = CAPTCHA_INCORRECT
         data['message'] = CAPTCHA_INCORRECT_MSG
-    elif mobile and password and identity and sex_isvalid(sex):
+    elif mobile and password and identity:
         user = User(
             id=User.get_random_id(),
             nickname='',
             password=password,
             mobile=mobile,
             identity=identity,
-            sex=sex
         )
         db.session.add(user)
         db.session.commit()

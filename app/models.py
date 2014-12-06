@@ -17,7 +17,7 @@ class User(UserMixin, db.Model):
     nickname = db.Column(db.Unicode(10), nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
-    sex = db.Column(db.SmallInteger, default=current_app.config['SEX_UNKNOWN'], nullable=False)
+    sex = db.Column(db.SmallInteger, default=2, nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     mobile = db.Column(db.CHAR(11), nullable=False)
     identity = db.Column(db.String(64), nullable=False)
