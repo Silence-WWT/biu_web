@@ -103,10 +103,10 @@ personal_info_setting
     URL:
         /api/v1.0/personal_info_setting    目前暂时在浏览器里用get方式直接打开可以上传图片
     method:
-        post
+        get
     parameters:
         user_id
-        image: 如果用户没有更换头像，可以为空
+        image_str: base64 string 如果用户没有更换头像，可以为空
         nickname: 无论用户是否重新设置了昵称和签名，每次调用接口都必须发送当前的昵称和签名
         signature
     json:
@@ -181,12 +181,12 @@ post
     URL:
         /api/v1.0/post      目前暂时在浏览器里用get方式直接打开可以上传图片
     method:
-        post
+        get
     parameters:
         user_id
         content
         channel_id
-        image
+        image_str: base64 string
     json:
         {"status": 0, "message": "success", "post": {"channel_id": "", "content": "", "created": "", "image": "",
             "comments_count": "", "post_id": "", "likes_count": "", "share_count": "",
@@ -258,7 +258,7 @@ get_channels
 get_posts
 ---
     URL:
-        /api/v1.0/post_comment?user_id=&channel_id=&page=
+        /api/v1.0/get_posts?user_id=&channel_id=&page=
     method:
         get
     parameters:
