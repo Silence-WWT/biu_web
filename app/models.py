@@ -176,10 +176,10 @@ class ThirdPartyUser(db.Model):
     __tablename__ = 'third_party_users'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    source_user_id = db.Column(db.CHAR(32), nullable=False)
+    society_user_id = db.Column(db.CHAR(32), nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     # 1 QQ, 2 微博
-    source = db.Column(db.SmallInteger, nullable=False)
+    society_id = db.Column(db.SmallInteger, nullable=False)
 
     def get_user(self):
         return User.query.get(self.user_id)
@@ -266,11 +266,10 @@ class Post(db.Model):
             'image': current_app.config['STATIC_URL'] + self.image,
             'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count(),
             'likes_count': self.likes_count,
-            'share_count': 0,  # TODO: 分享次数
+            'share_count': PostShare.query.filter_by(post_id=self.id).count(),
+            'is_liked': PostLike.is_liked(self.id, user_id, identity),
+            'is_shared': PostShare.is_shared(self.id, user_id, identity)
         }
-        if user_id or identity:
-            post_like = PostLike.is_liked(self.id, user_id, identity)
-        post_dict['is_liked'] = True if (user_id or identity) and post_like else False
         return post_dict
 
     def get_comments_dict(self, page, per_page):
@@ -307,9 +306,12 @@ class PostLike(db.Model):
 
     @staticmethod
     def is_liked(post_id, user_id, identity=''):
-        return PostLike.query.filter_by(
+        if not (user_id or identity):
+            return False
+        post_like = PostLike.query.filter_by(
             post_id=post_id, unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
         ).limit(1).first()
+        return True if post_like else False
 
     def get_post(self):
         return Post.query.get(self.post_id)
@@ -395,6 +397,27 @@ class PostComment(db.Model):
             db.session.commit()
 
 
+class PostShare(db.Model):
+    __tablename__ = 'post_shares'
+    id = db.Column(db.Integer, primary_key=True)
+    unified_user_id = db.Column(db.Integer, nullable=False)
+    post_comment_id = db.Column(db.Integer, nullable=False)
+    society_id = db.Column(db.SmallInteger, nullable=False)
+
+    def __init__(self, post_comment_id, user_id, identity):
+        self.post_comment_id = post_comment_id
+        self.unified_user_id = UnifiedUser.get_unified_user(user_id, identity).id
+
+    @staticmethod
+    def is_shared(post_id, user_id, identity=''):
+        if not (user_id or identity):
+            return False
+        post_share = PostShare.query.filter_by(
+            post_id=post_id, unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
+        ).limit(1).first()
+        return True if post_share else False
+
+
 class PostCommentLike(db.Model):
     __tablename__ = 'post_comment_likes'
     id = db.Column(db.Integer, primary_key=True)
@@ -407,9 +430,12 @@ class PostCommentLike(db.Model):
 
     @staticmethod
     def is_liked(post_comment_id, user_id, identity=''):
-        return PostCommentLike.query.filter_by(
+        if not (user_id or identity):
+            return False
+        post_comment_like = PostCommentLike.query.filter_by(
             post_comment_id=post_comment_id, unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
         ).limit(1).first()
+        return True if post_comment_like else False
 
     def get_post(self):
         return Post.query.get(self.post_id)
@@ -447,8 +473,22 @@ class Channel(db.Model):
         db.session.commit()
 
 
+class Society(db.Model):
+    __tablename__ = 'societies'
+    id = db.Column(db.SmallInteger, primary_key=True)
+    society = db.Column(db.Unicode(8), nullable=False)
+
+    @staticmethod
+    def generate():
+        db.session.add(Society(society=u'QQ'))
+        db.session.add(Society(society=u'微博'))
+        db.session.add(Society(society=u'微信'))
+        db.session.commit()
+
+
 def generate_helper_data():
     Channel.generate()
+    Society.generate()
 
 
 def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_count=100, post_comment_count=100):
