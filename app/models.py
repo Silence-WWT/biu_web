@@ -277,6 +277,12 @@ class Post(db.Model):
             paginate(page, per_page, False).items
         return [comment.get_comment_info() for comment in comments]
 
+    def add_likes_count(self):
+        self.likes_count += 1
+
+    def minus_likes_count(self):
+        self.likes_count -= 1
+
     @staticmethod
     def generate_fake(count):
         from faker import Factory
@@ -401,11 +407,12 @@ class PostShare(db.Model):
     __tablename__ = 'post_shares'
     id = db.Column(db.Integer, primary_key=True)
     unified_user_id = db.Column(db.Integer, nullable=False)
-    post_comment_id = db.Column(db.Integer, nullable=False)
+    post_id = db.Column(db.Integer, nullable=False)
     society_id = db.Column(db.SmallInteger, nullable=False)
 
-    def __init__(self, post_comment_id, user_id, identity):
-        self.post_comment_id = post_comment_id
+    def __init__(self, post_id, society_id, user_id, identity):
+        self.post_id = post_id
+        self.society_id = society_id
         self.unified_user_id = UnifiedUser.get_unified_user(user_id, identity).id
 
     @staticmethod

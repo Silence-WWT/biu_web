@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import request, jsonify, current_app
 
-from ..models import User, Fan, Post, PostLike, PostReport, PostComment, PostCommentLike, PostCommentReport, Channel
+from ..models import User, Fan, Post, PostLike, PostReport, PostShare, PostComment, PostCommentLike, PostCommentReport,\
+    Channel, Society
 from . import api
 from app import db
 from app.utils.image import upload_image
@@ -171,13 +172,38 @@ def like():
             db.session.add(target_like)
             db.session.commit()
             target_like.get_post().get_user().add_golds('like')
+            if isinstance(target_like, PostLike):
+                target_like.get_post().add_likes_count()
             if user:
                 pass
                 # TODO: 点赞推送
         elif cancel and target_like:
+            if isinstance(target_like, PostLike):
+                target_like.get_post().minus_likes_count()
             db.session.delete(target_like)
             db.session.commit()
             target_like.get_post().get_user().add_golds('like', 'minus')
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
+@api.route('/share')
+def share():
+    data = {}
+    post_id = request.values.get('post_id')
+    user_id = request.values.get('user_id', '', type=str)
+    identity = request.values.get('identity', '', type=str)
+    society_id = request.values.get('society_id', '', type=str)
+    society = Society.query.get(society_id)
+    post_ = Post.query.get(post_id)
+    if post_ and society and (user_id or identity):
+        post_share = PostShare(post_id, society_id, user_id, identity)
+        db.session.add(post_share)
+        db.session.commit()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:

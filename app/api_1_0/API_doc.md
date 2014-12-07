@@ -424,6 +424,24 @@ like
         message: str, message of status
         
         
+share
+---
+    URL:
+        /api/v1.0/share?user_id=&post_id=&society_id=&identity=
+    method:
+        get
+    parameters:
+        user_id
+        identity: user_id identity 至少需要一个，若用户已登录，可不传identity
+        post_id
+        society_id
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: int, 0 for success, 2000 for parameter error
+        message: str, message of status
+
+
 report
 ---
     URL:
