@@ -22,7 +22,9 @@ third_party_token
 confirm_mobile
 ---
     URL:
-        /api/v1.0/confirm_mobile
+        /api/v1.0/confirm_mobile?mobile=
+    parameters:
+        mobile
     method:
         get
     json:
