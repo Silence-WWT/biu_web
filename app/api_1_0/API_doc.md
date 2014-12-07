@@ -84,7 +84,41 @@ login
             mobile: str
             identity: str
             golds: 金币 int
-            avatar: 头像 int
+            avatar: 头像 str
+            signature: 个人签名 unicode
+            push: 是否推送消息 bool
+            disturb: 夜间是否推送消息 bool
+            sex: 0 for female, 1 for male, 2 for unknown
+
+
+third_party_login
+---
+    URL:
+        /api/v1.0/third_party_login?token=&identity=&source=&source_user_id=&nickname=&sex=&avatar=
+    method:
+        get
+    parameters:
+        token: 登录前获取的token且经过移动端的MD5加密
+        identity
+        source: 来源 1 QQ, 2 微博
+        source_user_id
+        nickname
+        sex: 0 female, 1 male, 2 unknown
+        avatar: 头像的url
+    json:
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
+            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": ""}}
+            
+        status: int, 0 for success, 1006 for token incorrect, 2000 for parameter error
+        message: str, message of status code
+        user: a dict of user's info
+            user_id: int
+            mobile: str
+            nickname: unicode
+            mobile: str
+            identity: str
+            golds: 金币 int
+            avatar: 头像 str
             signature: 个人签名 unicode
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
