@@ -2,7 +2,7 @@
 from flask import jsonify, request, current_app
 
 from app import db
-from app.models import User, Fan, ThirdPartyUser
+from app.models import User, Fan, ThirdPartyUser, Society
 from app.utils.image import upload_image, get_image_from_url
 from app.utils.sex import sex_isvalid
 from app.utils.verification import sms_captcha, redis_check, third_party_token
@@ -89,17 +89,19 @@ def login():
 def third_party_login():
     data = {'user': {}}
     identity = request.values.get('identity', '', type=str)
-    source = request.values.get('source', 0, type=int)
-    source_user_id = request.values.get('source_user_id', '', type=str)
+    society_id = request.values.get('society', 0, type=int)
+    society_user_id = request.values.get('society_user_id', '', type=str)
     token = request.values.get('token', '', type=str)
     nickname = request.values.get('nickname', u'', type=unicode)
     sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
     avatar = request.values.get('avatar', '', type=str)
+    society = Society.query.get(society_id)
     if not redis_check('token', identity, token):
         data['status'] = TOKEN_INCORRECT
         data['message'] = TOKEN_INCORRECT_MSG
-    elif source and source_user_id:
-        third_party_user = ThirdPartyUser.query.filter_by(source=source, source_user_id=source_user_id).limit(1).first()
+    elif society and society_user_id:
+        third_party_user = ThirdPartyUser.query.filter_by(society_id=society_id, society_user_id=society_user_id).\
+            limit(1).first()
         if not third_party_user:
             user_id = User.get_random_id()
             user = User(
@@ -114,8 +116,8 @@ def third_party_login():
             db.session.add(user)
             third_party_user = ThirdPartyUser(
                 user_id=user.id,
-                source_user_id=source_user_id,
-                source=source
+                society_user_id=society_user_id,
+                society_id=society_id
             )
             db.session.add(third_party_user)
             db.session.commit()
