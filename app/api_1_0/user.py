@@ -2,8 +2,8 @@
 from flask import jsonify, request, current_app
 
 from app import db
-from app.models import User, Fan
-from app.utils.image import upload_image
+from app.models import User, Fan, ThirdPartyUser
+from app.utils.image import upload_image, get_image_from_url
 from app.utils.sex import sex_isvalid
 from app.utils.verification import sms_captcha, redis_check, third_party_token
 from . import api
@@ -11,7 +11,7 @@ from api_constants import *
 
 
 @api.route('/third_party_token')
-def third_party_token():
+def get_third_party_token():
     identity = request.values.get('identity', '', type=str)
     data = {
         'token': third_party_token(identity),
@@ -52,7 +52,6 @@ def register():
     elif mobile and password and identity:
         user = User(
             id=User.get_random_id(),
-            nickname='',
             password=password,
             mobile=mobile,
             identity=identity,
@@ -83,6 +82,49 @@ def login():
     else:
         data['status'] = LOGIN_FAIL
         data['message'] = LOGIN_FAIL_MSG
+    return jsonify(data)
+
+
+@api.route('/third_party_login')
+def third_party_login():
+    data = {'user': {}}
+    identity = request.values.get('identity', '', type=str)
+    source = request.values.get('source', 0, type=int)
+    source_user_id = request.values.get('source_user_id', '', type=str)
+    token = request.values.get('token', '', type=str)
+    nickname = request.values.get('nickname', u'', type=unicode)
+    sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
+    avatar = request.values.get('avatar', '', type=str)
+    if not redis_check('token', identity, token):
+        data['status'] = TOKEN_INCORRECT
+        data['message'] = TOKEN_INCORRECT_MSG
+    elif source and source_user_id:
+        third_party_user = ThirdPartyUser.query.filter_by(source=source, source_user_id=source_user_id).limit(1).first()
+        if not third_party_user:
+            user_id = User.get_random_id()
+            user = User(
+                id=user_id,
+                identity=identity,
+                nickname=nickname,
+                password='',
+                mobile='',
+                sex=sex,
+                avatar=get_image_from_url(user_id, avatar)
+            )
+            db.session.add(user)
+            third_party_user = ThirdPartyUser(
+                user_id=user.id,
+                source_user_id=source_user_id,
+                source=source
+            )
+            db.session.add(third_party_user)
+            db.session.commit()
+        data['user'] = third_party_user.get_user().get_self_info_dict()
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
     return jsonify(data)
 
 

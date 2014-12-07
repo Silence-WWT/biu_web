@@ -13,6 +13,8 @@ NOT_IMAGE = 1004
 NOT_IMAGE_MSG = 'not a valid image'
 CAPTCHA_INCORRECT = 1005
 CAPTCHA_INCORRECT_MSG = 'captcha incorrect'
+TOKEN_INCORRECT = 1006
+TOKEN_INCORRECT_MSG = 'token incorrect'
 
 POST_NOT_EXIST = 2000
 POST_NOT_EXIST_MSG = 'post not exist'
