@@ -45,7 +45,7 @@ class UnifiedUser(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    nickname = db.Column(db.Unicode(10), nullable=False)
+    nickname = db.Column(db.Unicode(10), default=u'', nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
     sex = db.Column(db.SmallInteger, default=2, nullable=False)
@@ -86,7 +86,7 @@ class User(UserMixin, db.Model):
             'user_id': self.id,
             'nickname': self.nickname,
             'golds': self.golds,
-            'avatar': current_app.config['STATIC_URL'] + self.avatar,
+            'avatar': current_app.config['STATIC_URL'] + self.avatar if self.avatar else '',
             'signature': self.signature,
             'sex': self.sex
         }
@@ -101,7 +101,7 @@ class User(UserMixin, db.Model):
         return {
             'user_id': self.id,
             'nickname': self.nickname,
-            'avatar': current_app.config['STATIC_URL'] + self.avatar,
+            'avatar': current_app.config['STATIC_URL'] + self.avatar if self.avatar else ''
         }
 
     def get_profile_dict(self, page, user_id, identity):
@@ -170,6 +170,19 @@ class User(UserMixin, db.Model):
             )
             db.session.add(u)
         db.session.commit()
+
+
+class ThirdPartyUser(db.Model):
+    __tablename__ = 'third_party_users'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    source_user_id = db.Column(db.CHAR(32), nullable=False)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
+    # 1 QQ, 2 微博
+    source = db.Column(db.SmallInteger, nullable=False)
+
+    def get_user(self):
+        return User.query.get(self.user_id)
 
 
 class Fan(db.Model):
