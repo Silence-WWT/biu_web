@@ -94,14 +94,14 @@ login
 third_party_login
 ---
     URL:
-        /api/v1.0/third_party_login?token=&identity=&source=&source_user_id=&nickname=&sex=&avatar=
+        /api/v1.0/third_party_login?token=&identity=&society_id=&society_user_id=&nickname=&sex=&avatar=
     method:
         get
     parameters:
         token: 登录前获取的token且经过移动端的MD5加密
         identity
-        source: 来源 1 QQ, 2 微博
-        source_user_id
+        society_id: 来源 1 QQ, 2 微博
+        society_user_id
         nickname
         sex: 0 female, 1 male, 2 unknown
         avatar: 头像的url
