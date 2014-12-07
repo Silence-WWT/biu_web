@@ -75,7 +75,8 @@ login
         identity
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
-            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": ""}}
+            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
+            "followers_count": ""}}
             
         status: int, 0 for success, 1000 for login fail, 2000 for parameter error
         message: str, message of status code
@@ -91,6 +92,8 @@ login
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
             sex: 0 for female, 1 for male, 2 for unknown
+            followings_count: int
+            followers_count: int
 
 
 third_party_login
@@ -109,7 +112,8 @@ third_party_login
         avatar: 头像的url
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
-            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": ""}}
+            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
+            "followers_count": ""}}
             
         status: int, 0 for success, 1006 for token incorrect, 2000 for parameter error
         message: str, message of status code
@@ -125,6 +129,8 @@ third_party_login
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
             sex: 0 for female, 1 for male, 2 for unknown
+            followings_count: int
+            followers_count: int
 
 
 follow

@@ -88,7 +88,9 @@ class User(UserMixin, db.Model):
             'golds': self.golds,
             'avatar': current_app.config['STATIC_URL'] + self.avatar if self.avatar else '',
             'signature': self.signature,
-            'sex': self.sex
+            'sex': self.sex,
+            'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
+            'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
         }
         if is_self:
             user_dict['identity'] = self.identity
