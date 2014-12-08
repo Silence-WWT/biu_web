@@ -22,7 +22,7 @@ def upgrade():
     sa.Column('post_id', sa.Integer(), nullable=False),
     sa.Column('x', sa.Float(), nullable=False),
     sa.Column('y', sa.Float(), nullable=False),
-    sa.Column('content', sa.Unicode(length=30), nullable=False),
+    sa.Column('content', sa.Unicode(length=24), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -102,7 +102,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('image', sa.String(length=128), nullable=False),
-    sa.Column('content', sa.Unicode(length=24), nullable=False),
+    sa.Column('content', sa.Unicode(length=140), nullable=False),
     sa.Column('channel_id', sa.Integer(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('likes_count', sa.Integer(), nullable=False),

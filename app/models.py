@@ -240,7 +240,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     image = db.Column(db.String(128), nullable=False)
-    content = db.Column(db.Unicode(24), nullable=False)
+    content = db.Column(db.Unicode(140), nullable=False)
     channel_id = db.Column(db.Integer, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
     likes_count = db.Column(db.Integer, default=0, nullable=False)
@@ -364,7 +364,7 @@ class PostComment(db.Model):
     post_id = db.Column(db.Integer, nullable=False)
     x = db.Column(db.Float, nullable=False)
     y = db.Column(db.Float, nullable=False)
-    content = db.Column(db.Unicode(30), nullable=False)
+    content = db.Column(db.Unicode(24), nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
