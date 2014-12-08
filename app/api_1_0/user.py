@@ -10,8 +10,8 @@ from . import api
 from api_constants import *
 
 
-@api.route('/third_party_token')
-def get_third_party_token():
+@api.route('/register_token')
+def register_token():
     identity = request.values.get('identity', '', type=str)
     data = {
         'token': third_party_token(identity),
@@ -21,7 +21,7 @@ def get_third_party_token():
     return jsonify(data)
 
 
-@api.route('/confirm_mobile')
+# @api.route('/confirm_mobile')
 def confirm_mobile():
     data = {}
     mobile = request.values.get('mobile', '', type=str)
@@ -40,20 +40,20 @@ def register():
     data = {'user': {}}
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
-    mobile = request.values.get('mobile', '', type=str)
-    captcha = request.values.get('captcha', '', type=str)
-    user = User.query.filter_by(mobile=mobile).limit(1).first()
+    email = request.values.get('email', '', type=str)
+    token = request.values.get('token', '', type=str)
+    user = User.query.filter_by(email=email).limit(1).first()
     if user:
-        data['status'] = MOBILE_EXIST
-        data['message'] = MOBILE_EXIST_MSG
-    elif not redis_check('captcha', mobile, captcha):
-        data['status'] = CAPTCHA_INCORRECT
-        data['message'] = CAPTCHA_INCORRECT_MSG
-    elif mobile and password and identity:
+        data['status'] = EMAIL_EXIST
+        data['message'] = EMAIL_EXIST_MSG
+    elif not redis_check('token', identity, token):
+        data['status'] = TOKEN_INCORRECT
+        data['message'] = TOKEN_INCORRECT_MSG
+    elif email and password and identity:
         user = User(
             id=User.get_random_id(),
             password=password,
-            mobile=mobile,
+            email=email,
             identity=identity,
         )
         db.session.add(user)
@@ -70,10 +70,10 @@ def register():
 @api.route('/login')
 def login():
     data = {'user': {}}
-    mobile = request.values.get('mobile', '', type=str)
+    email = request.values.get('email', '', type=str)
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
-    user = User.query.filter_by(mobile=mobile).limit(1).first()
+    user = User.query.filter_by(email=email).limit(1).first()
     if user and user.verify_password(password):
         user.update_identity(identity)
         data['status'] = SUCCESS

@@ -2,11 +2,11 @@ Biu API Doc
 ===
 
 
-third_party_token
+register_token
 ---
-    第三方登录前必须先调用这个接口获取token, 第三方登录时, 再将根据MD5加密过的token返回
+    第三方登录或者用户注册前必须先调用这个接口获取token, 第三方登录时, 再将根据MD5加密过的token返回
     URL:
-        /api/v1.0/third_party_token?identity=
+        /api/v1.0/register_token?identity=
     method:
         get
     parameters:
@@ -21,6 +21,7 @@ third_party_token
 
 confirm_mobile
 ---
+    这个接口目前用不到了……
     URL:
         /api/v1.0/confirm_mobile?mobile=
     parameters:
@@ -37,44 +38,48 @@ confirm_mobile
 register
 ---
     URL:
-        /api/v1.0/register?password=&identity=&mobile=&captcha=
+        /api/v1.0/register?password=&identity=&email=&token=
     method:
         get
     parameters:
         password
         identity: uuid
-        mobile: 必须
-        captcha
+        email: 必须
+        token
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "",
-            "identity": "", "golds": "", "avatar": "", "signature": "", "push": "", "disturb": ""}}
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
+            "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
+            "followers_count": ""}}
             
-        status: int, 0 for success, 1001 for mobile exists, 2000 for parameter error, 1005 for captcha incorrect
+        status: int, 0 for success, 1001 for email exists, 2000 for parameter error, 1006 for token incorrect
         message: str, message of status code
         user: a dict of user's info
             user_id: int
             nickname: unicode
-            mobile: str
+            email: str
             identity: str
             golds: 金币 int
             avatar: 头像 str
             signature: 个人签名 unicode
             push: 是否推送消息 bool
             disturb: 夜间是否推送消息 bool
-            
+            sex: 0 for female, 1 for male, 2 for unknown
+            followings_count: int
+            followers_count: int
+
 
 login
 ---
     URL:
-        /api/v1.0/login?mobile=&password=&identity=
+        /api/v1.0/login?email=&password=&identity=
     method:
         get
     parameters:
-        mobile
+        email
         password
         identity
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
             "followers_count": ""}}
             
@@ -82,9 +87,8 @@ login
         message: str, message of status code
         user: a dict of user's info
             user_id: int
-            mobile: str
             nickname: unicode
-            mobile: str
+            email: str
             identity: str
             golds: 金币 int
             avatar: 头像 str
@@ -111,7 +115,7 @@ third_party_login
         sex: 0 female, 1 male, 2 unknown
         avatar: 头像的url
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "mobile": "", "identity": "",
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
             "followers_count": ""}}
             
@@ -119,9 +123,8 @@ third_party_login
         message: str, message of status code
         user: a dict of user's info
             user_id: int
-            mobile: str
             nickname: unicode
-            mobile: str
+            email: str
             identity: str
             golds: 金币 int
             avatar: 头像 str

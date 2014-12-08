@@ -15,7 +15,7 @@ class UnifiedUser(db.Model):
     __tablename__ = 'unified_users'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    identity = db.Column(db.CHAR(64), nullable=False)
+    identity = db.Column(db.String(64), nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
 
     @staticmethod
@@ -28,6 +28,7 @@ class UnifiedUser(db.Model):
                 db.session.commit()
         else:
             user = User.query.get(user_id)
+            # TODO: user may be None
             unified_user = UnifiedUser.query.filter_by(user_id=user_id).limit(1).first()
             if not unified_user:
                 unified_user = UnifiedUser(user_id=user_id, identity=user.identity)
@@ -50,7 +51,8 @@ class User(UserMixin, db.Model):
     salt = db.Column(db.String(128), nullable=False)
     sex = db.Column(db.SmallInteger, default=2, nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
-    mobile = db.Column(db.CHAR(11), nullable=False)
+    email = db.Column(db.String(64), nullable=False)
+    email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     identity = db.Column(db.String(64), nullable=False)
     golds = db.Column(db.Integer, default=0, nullable=False)
     avatar = db.Column(db.String(128), default='', nullable=False)
@@ -94,7 +96,7 @@ class User(UserMixin, db.Model):
         }
         if is_self:
             user_dict['identity'] = self.identity
-            user_dict['mobile'] = self.mobile
+            user_dict['email'] = self.email
             user_dict['push'] = self.push
             user_dict['disturb'] = self.disturb
         return user_dict
@@ -154,7 +156,6 @@ class User(UserMixin, db.Model):
     def generate_fake(count=1000):
         from faker import Factory
         fake = Factory.create()
-        zh = Factory.create('zh-CN')
         with open('avatars.txt', 'r') as f:
             avatars = f.readlines()
         avatar_count = len(avatars)
@@ -163,7 +164,7 @@ class User(UserMixin, db.Model):
             u = User(
                 # id=User.get_random_id(),
                 nickname=fake.user_name(),
-                mobile=zh.phone_number(),
+                email=fake.email(),
                 password='123456',
                 identity=fake.password(64),
                 golds=fake.random_int(),
@@ -178,7 +179,7 @@ class ThirdPartyUser(db.Model):
     __tablename__ = 'third_party_users'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    society_user_id = db.Column(db.CHAR(32), nullable=False)
+    society_user_id = db.Column(db.String(32), nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     # 1 QQ, 2 微博
     society_id = db.Column(db.SmallInteger, nullable=False)
@@ -239,7 +240,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
     image = db.Column(db.String(128), nullable=False)
-    content = db.Column(db.Unicode(140), nullable=False)
+    content = db.Column(db.Unicode(24), nullable=False)
     channel_id = db.Column(db.Integer, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
     likes_count = db.Column(db.Integer, default=0, nullable=False)
@@ -298,7 +299,7 @@ class Post(db.Model):
             for j in range(random_count):
                 random_index = randrange(0, image_count)
                 db.session.add(Post(user_id=i, image=images[random_index],
-                                    content=fake.sentence(), channel_id=randint(3, 7)))
+                                    content=fake.sentence(), channel_id=randint(1, 5)))
             db.session.commit()
 
 
@@ -426,6 +427,19 @@ class PostShare(db.Model):
         ).limit(1).first()
         return True if post_share else False
 
+    @staticmethod
+    def generate_fake(count):
+        post_count = Post.query.count()
+        user_count = User.query.count()
+        for i in range(1, user_count + 1):
+            random_count = randrange(0, count + 1)
+            post_set = set()
+            for j in range(random_count):
+                post_set.add(randrange(1, post_count + 1))
+            for j in post_set:
+                db.session.add(PostShare(post_id=j, society_id=randrange(1, 5), user_id=i, identity=''))
+            db.session.commit()
+
 
 class PostCommentLike(db.Model):
     __tablename__ = 'post_comment_likes'
@@ -492,6 +506,7 @@ class Society(db.Model):
         db.session.add(Society(society=u'QQ'))
         db.session.add(Society(society=u'微博'))
         db.session.add(Society(society=u'微信'))
+        db.session.add(Society(society=u'QQ空间'))
         db.session.commit()
 
 
@@ -500,12 +515,16 @@ def generate_helper_data():
     Society.generate()
 
 
-def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_count=100, post_comment_count=100):
-    User.generate_fake(user_count)
-    Fan.generate_fake(fan_count)
-    Post.generate_fake(post_count)
-    PostLike.generate_fake(post_like_count)
-    PostComment.generate_fake(post_comment_count)
+def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_count=100,
+                       post_share_count=100, post_comment_count=100):
+    # User.generate_fake(user_count)
+    # Fan.generate_fake(fan_count)
+    # Post.generate_fake(post_count)
+    # PostLike.generate_fake(post_like_count)
+    # PostShare.generate_fake(post_share_count)
+    # PostComment.generate_fake(post_comment_count)
+    for post in Post.query.all():
+        post.likes_count = PostLike.query.filter_by(post_id=post.id).count()
 
 
 def generate_fake_image_path():
