@@ -157,7 +157,7 @@ class User(UserMixin, db.Model):
         from faker import Factory
         fake = Factory.create()
         with open('avatars.txt', 'r') as f:
-            avatars = f.readlines()
+            avatars = [avatar.replace('\n', '') for avatar in f.readlines()]
         avatar_count = len(avatars)
         for i in range(1, count + 1):
             random_index = randrange(0, avatar_count)
@@ -292,7 +292,7 @@ class Post(db.Model):
         fake = Factory.create()
         user_count = User.query.count()
         with open('images.txt', 'r') as f:
-            images = f.readlines()
+            images = [image.replace('\n', '') for image in f.readlines()]
         image_count = len(images)
         for i in range(1, user_count + 1):
             random_count = randrange(0, count + 1)
@@ -517,12 +517,12 @@ def generate_helper_data():
 
 def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_count=100,
                        post_share_count=100, post_comment_count=100):
-    # User.generate_fake(user_count)
-    # Fan.generate_fake(fan_count)
-    # Post.generate_fake(post_count)
-    # PostLike.generate_fake(post_like_count)
-    # PostShare.generate_fake(post_share_count)
-    # PostComment.generate_fake(post_comment_count)
+    User.generate_fake(user_count)
+    Fan.generate_fake(fan_count)
+    Post.generate_fake(post_count)
+    PostLike.generate_fake(post_like_count)
+    PostShare.generate_fake(post_share_count)
+    PostComment.generate_fake(post_comment_count)
     for post in Post.query.all():
         post.likes_count = PostLike.query.filter_by(post_id=post.id).count()
 
