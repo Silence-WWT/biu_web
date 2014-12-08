@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import jsonify, request, current_app
+from sqlalchemy import func, desc
 
 from app import db
-from app.models import User, Fan, ThirdPartyUser, Society
+from app.models import User, Fan, ThirdPartyUser, Society, Post
 from app.utils.image import upload_image, get_image_from_url
 from app.utils.sex import sex_isvalid
 from app.utils.verification import sms_captcha, redis_check, third_party_token
@@ -249,4 +250,18 @@ def follow_list():
         data['follows'].append(follow_dict)
     data['status'] = SUCCESS
     data['message'] = SUCCESS_MSG
+    return jsonify(data)
+
+
+@api.route('/active_users')
+def active_users():
+    data = {
+        'status': SUCCESS,
+        'message': SUCCESS_MSG,
+        'users': []
+    }
+    posts = db.session.query(Post.user_id, func.count('*').label('posts_count')).group_by(Post.user_id).\
+        order_by(desc('posts_count')).limit(10)
+    for post in posts:
+        data['users'].append(Post.query.get(post[0]).get_user().get_brief_info_dict())
     return jsonify(data)

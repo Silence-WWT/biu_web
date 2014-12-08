@@ -136,6 +136,24 @@ third_party_login
             followers_count: int
 
 
+active_users
+---
+    目前只是返回发送图片数量最多的十个用户，显示几个你们自己决定吧……
+    URL:
+        /api/v1.0/active_users
+    method:
+        get
+    json:
+        {"status": 0, "message": "success", "users": [{"user_id": "", "avatar": "", "nickname": ""}]}
+        
+        status: int, 0 for success
+        message: str, message of status code
+        users: a list of user's info dict
+            user_id: int
+            nickname: unicode
+            avatar: 头像 str
+            
+
 follow
 ---
     URL:
