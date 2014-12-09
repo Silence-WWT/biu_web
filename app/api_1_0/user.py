@@ -137,10 +137,10 @@ def profile():
     user_id = request.values.get('user_id', '', type=str)
     target_id = request.values.get('target_id', '', type=str)
     page = request.values.get('page', 1, type=int)
-    user = User.query.get(user_id)
+    identity = request.values.get('identity', '', type=str)
     target = User.query.get(target_id)
-    if user and target:
-        data['profile'] = target.get_profile_dict(page, user_id)
+    if target:
+        data['profile'] = target.get_profile_dict(page, user_id, identity)
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:

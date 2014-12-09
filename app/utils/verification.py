@@ -29,7 +29,6 @@ def third_party_token(identity):
     key = 'third_party_token:' + identity
     token = __fake.password(64)
     __local_redis.set(key, token, 600)
-    print(token)
     return token
 
 

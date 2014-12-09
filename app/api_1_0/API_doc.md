@@ -235,13 +235,14 @@ push_setting
 profile
 ---
     URL:
-        /api/v1.0/profile?user_id=&page=&identity=
+        /api/v1.0/profile?user_id=&page=&identity=&target_id=
     method:
         get
     parameters:
         user_id
         page: default 1, page of user's posts
         identity: 用户未登录需要提交identity
+        target_id
     json:
         {"status": 0, "message": "success", "profile": {"followings_count": "", "followers_count": "", "is_followed": "",
              "is_following": "", "posts_count": "", "likes_count": "", "share_count": "",
