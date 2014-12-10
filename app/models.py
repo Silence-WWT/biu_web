@@ -289,17 +289,20 @@ class Post(db.Model):
     @staticmethod
     def generate_fake(count):
         from faker import Factory
-        fake = Factory.create()
+        zh = Factory.create('zh-CN')
         user_count = User.query.count()
         with open('images.txt', 'r') as f:
             images = [image.replace('\n', '') for image in f.readlines()]
         image_count = len(images)
+        fake_func_list = (zh.address, zh.name, zh.company, zh.country) * 4
         for i in range(1, user_count + 1):
             random_count = randrange(0, count + 1)
             for j in range(random_count):
                 random_index = randrange(0, image_count)
-                db.session.add(Post(user_id=i, image=images[random_index],
-                                    content=fake.sentence(), channel_id=randint(1, 5)))
+                content_length = randint(1, 15)
+                db.session.add(Post(
+                    user_id=i, image=images[random_index], channel_id=randint(1, 4),
+                    content=''.join((i() for i in fake_func_list[:content_length])).replace('\n', ''), ))
             db.session.commit()
 
 
@@ -393,16 +396,21 @@ class PostComment(db.Model):
     @staticmethod
     def generate_fake(count):
         from faker import Factory
-        fake = Factory.create()
+        zh = Factory.create('zh-CN')
         post_count = Post.query.count()
         user_count = User.query.count()
+        fake_func_list = (zh.address, zh.name, zh.company, zh.country)
         for i in range(1, user_count + 1):
             random_count = randrange(0, count + 1)
             post_set = set()
             for j in range(random_count):
                 post_set.add(randrange(1, post_count + 1))
             for j in post_set:
-                db.session.add(PostComment(user_id=i, post_id=j, x=random(), y=random(), content=fake.sentence()))
+                content_length = randint(1, 4)
+                db.session.add(PostComment(
+                    user_id=i, post_id=j, x=random(), y=random(),
+                    content=''.join((i() for i in fake_func_list[:content_length])).replace('\n', ''))
+                )
             db.session.commit()
 
 
