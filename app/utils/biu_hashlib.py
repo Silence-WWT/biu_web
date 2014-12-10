@@ -60,8 +60,8 @@ class MD5():
         for i in order:
             i *= 4
             msg_16[ii] = '0x' + ''.join(
-                (self.__message_list[i + offset] + self.__message_list[i + 1 + offset] + self.__message_list[i + 2 + offset] +
-                 self.__message_list[i + 3 + offset]).split('0x'))
+                (self.__message_list[i + offset] + self.__message_list[i + 1 + offset] +
+                 self.__message_list[i + 2 + offset] + self.__message_list[i + 3 + offset]).split('0x'))
             ii += 1
         for c in msg_16:
             index = msg_16.index(c)

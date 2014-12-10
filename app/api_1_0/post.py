@@ -124,6 +124,27 @@ def get_posts():
     return jsonify(data)
 
 
+@api.route('/post_detail')
+def post_detail():
+    data = {'post': {}}
+    post_id = request.values.get('post_id', '', type=str)
+    user_id = request.values.get('user_id', '', type=str)
+    identity = request.values.get('identity', '', type=str)
+    post_ = Post.query.get(post_id)
+    if post_ and (user_id or identity):
+        data['post'] = post_.get_post_info_dict(user_id, identity)
+        data['post']['comments'] = post_.get_comments_dict(1, 10)
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    elif not post_:
+        data['status'] = POST_NOT_EXIST
+        data['message'] = POST_NOT_EXIST_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
 @api.route('/get_post_comments')
 def get_post_comments():
     data = {}

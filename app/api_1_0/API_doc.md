@@ -405,7 +405,52 @@ get_posts
                 user: a dict of user
                     user_id: int
                     nickname: unicode
-                    avatar:: str
+                    avatar: str
+
+
+post_detail
+---
+    URL:
+        /api/v1.0/get_post_comments?post_id=&user_id=&identity=
+    method:
+        get
+    parameters:
+        post_id
+        user_id
+        identity: user_id 与 identity 必须有一项不为空
+    json:
+        {"status": 0, "message": "success", "posts": {"channel_id": "", "content": "", "created": "", "image": "",
+            "comments_count": "", "post_id": "", "likes_count": "", "share_count": "", "is_liked": "",
+            "user": {"avatar": "", "user_id": "", "nickname": ""},
+            "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
+                "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
+        
+        status: int, 0 for success, 1002 for user not exist
+        message: str, message for status code
+        posts: a dict of post info
+            post_id: int
+            created: int
+            image: str
+            content: unicode
+            channel_id: int
+            comments_count: int
+            likes_count: int
+            share_count: int
+            is_liked: bool
+            user: a dict of user
+                user_id: int
+                avatar: str
+                nickname: unicode
+            comments: a list of comments dict in first page
+                post_id: int
+                created: 弹幕发送的时间，1970.1.1 开始的秒数  int
+                content: unicode
+                x: float
+                y: float
+                user: a dict of user
+                    user_id: int
+                    nickname: unicode
+                    avatar: str
 
 
 get_post_comments

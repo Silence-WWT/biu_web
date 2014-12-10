@@ -18,11 +18,11 @@ TOKEN_INCORRECT_MSG = 'token incorrect'
 
 POST_NOT_EXIST = 2000
 POST_NOT_EXIST_MSG = 'post not exist'
-MESSAGE_CONFIRM_FAIL = 2001
-MESSAGE_CONFIRM_FAIL_MSG = 'message confirm fail'
 
-PARAMETER_ERROR = 2000
+PARAMETER_ERROR = 3000
 PARAMETER_ERROR_MSG = 'lack parameter or wrong parameter!'
+MESSAGE_CONFIRM_FAIL = 3001
+MESSAGE_CONFIRM_FAIL_MSG = 'message confirm fail'
 
 STATIC_URL = ''
 
