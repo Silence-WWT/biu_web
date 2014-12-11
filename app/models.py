@@ -325,6 +325,13 @@ class PostLike(db.Model):
         ).limit(1).first()
         return True if post_like else False
 
+    @staticmethod
+    def get_like(post_id, user_id, identity=''):
+        return PostLike.query.filter_by(
+            post_id=post_id,
+            unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
+        ).first()
+
     def get_post(self):
         return Post.query.get(self.post_id)
 
@@ -468,6 +475,13 @@ class PostCommentLike(db.Model):
         ).limit(1).first()
         return True if post_comment_like else False
 
+    @staticmethod
+    def get_like(post_id, user_id, identity=''):
+        return PostCommentLike.query.filter_by(
+            post_id=post_id,
+            unified_user_id=UnifiedUser.get_unified_user(user_id, identity).id
+        ).first()
+
     def get_post(self):
         return Post.query.get(self.post_id)
 
@@ -497,8 +511,9 @@ class Channel(db.Model):
 
     @staticmethod
     def generate():
+        db.session.add(Channel(channel=u'你开心就好'))
         db.session.add(Channel(channel=u'涨姿势'))
-        db.session.add(Channel(channel=u'随手拍'))
+        db.session.add(Channel(channel=u'脑洞是第一生产力'))
         db.session.add(Channel(channel=u'那么问题来了'))
         db.session.add(Channel(channel=u'全明星阵容'))
         db.session.commit()

@@ -187,7 +187,7 @@ def like():
         return jsonify(data)
 
     if target and (user or identity):
-        target_like = target_class.is_liked(target_id, user_id, identity)
+        target_like = target_class.get_like(target_id, user_id, identity)
         if not cancel and not target_like:
             target_like = target_class(target_id, user_id, identity)
             db.session.add(target_like)
@@ -201,6 +201,7 @@ def like():
         elif cancel and target_like:
             if isinstance(target_like, PostLike):
                 target_like.get_post().minus_likes_count()
+            print type(target_class), type(Post), type(target_like)
             db.session.delete(target_like)
             db.session.commit()
             target_like.get_post().get_user().add_golds('like', 'minus')
