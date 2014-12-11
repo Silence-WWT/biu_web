@@ -110,7 +110,7 @@ def third_party_login():
                 identity=identity,
                 nickname=nickname,
                 password='',
-                mobile='',
+                email='',
                 sex=sex,
                 avatar=get_image_from_url(user_id, avatar)
             )
