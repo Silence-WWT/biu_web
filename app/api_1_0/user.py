@@ -90,7 +90,7 @@ def login():
 def third_party_login():
     data = {'user': {}}
     identity = request.values.get('identity', '', type=str)
-    society_id = request.values.get('society', 0, type=int)
+    society_id = request.values.get('society_id', 0, type=int)
     society_user_id = request.values.get('society_user_id', '', type=str)
     token = request.values.get('token', '', type=str)
     nickname = request.values.get('nickname', u'', type=unicode)
