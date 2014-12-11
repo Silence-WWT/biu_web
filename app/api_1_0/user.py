@@ -50,7 +50,7 @@ def register():
     elif not redis_check('token', identity, token):
         data['status'] = TOKEN_INCORRECT
         data['message'] = TOKEN_INCORRECT_MSG
-    elif email and password and identity:
+    elif email and identity:
         user = User(
             id=User.get_random_id(),
             password=password,
