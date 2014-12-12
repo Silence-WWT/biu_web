@@ -121,7 +121,7 @@ class User(UserMixin, db.Model):
         return profile_dict
 
     def get_self_posts(self, page, user_id, identity):
-        posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(Post.created).\
+        posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Post.created).\
             paginate(page, current_app.config['HOME_PAGE_POSTS_PER_PAGE'], False).items
         return [post.get_post_info_dict(user_id, identity) for post in posts]
 
