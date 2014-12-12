@@ -117,8 +117,8 @@ class User(UserMixin, db.Model):
             'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
             'posts_count': Post.query.filter_by(user_id=self.id, is_deleted=False).count(),
             'posts': self.get_self_posts(page, user_id, identity),
-            'is_follow': Fan.is_follow(user_id, self.id),
-            'is_follow': Fan.is_follow(self.id, user_id)
+            'is_following': Fan.is_follow(user_id, self.id),
+            'is_followed': Fan.is_follow(self.id, user_id)
         }
         return profile_dict
 
