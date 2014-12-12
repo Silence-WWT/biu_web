@@ -232,7 +232,7 @@ def follow():
             db.session.add(fan)
             db.session.commit()
             # TODO: 关注推送
-        elif fan.is_deleted and not cancel:
+        elif fan and fan.is_deleted and not cancel:
             fan.is_deleted = False
         elif fan and cancel:
             fan.is_deleted = True
