@@ -263,8 +263,8 @@ def follow_list():
         return jsonify(data)
     for follow_ in follows:
         follow_dict = follow_.get_user_or_idol(following).get_brief_info_dict()
-        follow_dict['is_followed'] = Fan.is_followed(target_id, user_id)
-        follow_dict['is_following'] = Fan.is_following(user_id, target_id)
+        follow_dict['is_follow'] = Fan.is_follow(follow_.idol_id, user_id)
+        follow_dict['is_follow'] = Fan.is_follow(user_id, follow_.idol_id)
         data['follows'].append(follow_dict)
     data['status'] = SUCCESS
     data['message'] = SUCCESS_MSG

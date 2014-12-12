@@ -59,6 +59,8 @@ class User(UserMixin, db.Model):
     signature = db.Column(db.Unicode(30), default=u'', nullable=False)
     push = db.Column(db.Boolean, default=True, nullable=False)
     disturb = db.Column(db.Boolean, default=True, nullable=False)
+    # Android 0, iOS 1
+    device = db.Column(db.SmallInteger, default=0, nullable=False)
 
     @staticmethod
     def get_random_id():
@@ -115,8 +117,8 @@ class User(UserMixin, db.Model):
             'followers_count': Fan.query.filter_by(idol_id=self.id, is_deleted=False).count(),
             'posts_count': Post.query.filter_by(user_id=self.id, is_deleted=False).count(),
             'posts': self.get_self_posts(page, user_id, identity),
-            'is_following': Fan.is_following(user_id, self.id),
-            'is_followed': Fan.is_followed(self.id, user_id)
+            'is_follow': Fan.is_follow(user_id, self.id),
+            'is_follow': Fan.is_follow(self.id, user_id)
         }
         return profile_dict
 
@@ -203,12 +205,7 @@ class Fan(db.Model):
             return User.query.get(self.user_id)
 
     @staticmethod
-    def is_following(user_id, idol_id):
-        fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id, is_deleted=False).limit(1).first()
-        return True if fan else False
-
-    @staticmethod
-    def is_followed(user_id, idol_id):
+    def is_follow(user_id, idol_id):
         fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id, is_deleted=False).limit(1).first()
         return True if fan else False
 
@@ -556,3 +553,8 @@ def generate_fake_image_path():
     posts = Post.query.all()
     for post in posts:
         post.image = images[randrange(0, len(images))]
+
+
+def test_message():
+    from utils.message import push
+    push('comment', User.query.get(4), User.query.get(1), 'aslkdflsf')

@@ -201,7 +201,6 @@ def like():
         elif cancel and target_like:
             if isinstance(target_like, PostLike):
                 target_like.get_post().minus_likes_count()
-            print type(target_class), type(Post), type(target_like)
             db.session.delete(target_like)
             db.session.commit()
             target_like.get_post().get_user().add_golds('like', 'minus')
