@@ -149,6 +149,24 @@ def profile():
     return jsonify(data)
 
 
+@api.route('/profile_posts')
+def profile_posts():
+    data = {'posts': {}}
+    user_id = request.values.get('user_id', '', type=str)
+    target_id = request.values.get('target_id', '', type=str)
+    page = request.values.get('page', 1, type=int)
+    identity = request.values.get('identity', '', type=str)
+    target = User.query.get(target_id)
+    if target:
+        data['posts'] = target.get_self_posts(page, user_id, identity)
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = USER_NOT_EXIST
+        data['message'] = USER_NOT_EXIST_MSG
+    return jsonify(data)
+
+
 @api.route('/push_setting')
 def push_setting():
     data = {}

@@ -280,6 +280,43 @@ profile
                     avatar: str
 
 
+profile_posts
+---
+    URL:
+        /api/v1.0/profile?user_id=&page=&identity=&target_id=
+    method:
+        get
+    parameters:
+        user_id
+        page: default 1, page of user's posts
+        identity: 用户未登录需要提交identity
+        target_id
+    json:
+        {"status": 0, "message": "success", "posts": [{"channel_id": "", "content": "", "created": "", "image": "",
+            "comments_count": "", "post_id": "", "likes_count": "", "share_count": "", "is_liked": "",
+            "user": {"avatar": "", "user_id": "", "nickname": ""},
+            "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
+                "user": {"user_id": "", "nickname": "", "avatar": ""}}]]}
+    
+        status: int, 0 for success, 1002 for user not exist
+        message: str, message of status code
+        
+        posts: a list of post dict
+            post_id: int
+            channel_id: int
+            content: unicode
+            created: int
+            image: str
+            comments_count
+            likes_count: int
+            share_count: int
+            is_liked: bool
+            user: a dict of user info
+                user_id: int
+                nickname: unicode
+                avatar: str
+
+        
 post
 ---
     URL:
