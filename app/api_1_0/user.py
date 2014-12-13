@@ -279,7 +279,7 @@ def active_users():
         'users': []
     }
     posts = db.session.query(Post.user_id, func.count('*').label('posts_count')).group_by(Post.user_id).\
-        order_by(desc('posts_count')).limit(10)
+        order_by(desc('posts_count')).limit(12)
     for post in posts:
         data['users'].append(Post.query.get(post[0]).get_user().get_brief_info_dict())
     return jsonify(data)
