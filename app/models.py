@@ -505,14 +505,24 @@ class Channel(db.Model):
     __tablename__ = 'channels'
     id = db.Column(db.Integer, primary_key=True)
     channel = db.Column(db.Unicode(30), nullable=False)
+    panel = db.Column(db.String(64), nullable=False)
+    navbar = db.Column(db.String(64), nullable=False)
+
+    def get_channel(self):
+        return {
+            'channel_id': self.id,
+            'channel': self.channel,
+            'panel': current_app.config['STATIC_URL'] + self.panel,
+            'navbar': current_app.config['STATIC_URL'] + self.navbar
+        }
 
     @staticmethod
     def generate():
-        db.session.add(Channel(channel=u'你开心就好'))
-        db.session.add(Channel(channel=u'涨姿势'))
-        db.session.add(Channel(channel=u'脑洞是第一生产力'))
-        db.session.add(Channel(channel=u'那么问题来了'))
-        db.session.add(Channel(channel=u'全明星阵容'))
+        db.session.add(Channel(channel=u'你开心就好', panel=u'channels/Channel1.png', navbar=u'channels/NavBar1.png'))
+        db.session.add(Channel(channel=u'涨姿势', panel=u'channels/Channel2.png', navbar=u'channels/NavBar2.png'))
+        db.session.add(Channel(channel=u'脑洞是第一生产力', panel=u'channels/Channel3.png', navbar=u'channels/NavBar3.png'))
+        db.session.add(Channel(channel=u'那么问题来了', panel=u'channels/Channel4.png', navbar=u'channels/NavBar4.png'))
+        db.session.add(Channel(channel=u'全明星阵容', panel=u'channels/Channel5.png', navbar=u'channels/NavBar5.png'))
         db.session.commit()
 
 

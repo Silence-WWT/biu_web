@@ -75,7 +75,7 @@ def post_comment():
 def get_channels():
     channels = Channel.query.all()
     data = {
-        'channels': [{"channel_id": channel.id, "channel": channel.channel} for channel in channels],
+        'channels': [channel.get_channel() for channel in channels],
         'status': SUCCESS,
         'message': SUCCESS_MSG
     }

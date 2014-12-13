@@ -194,7 +194,6 @@ def personal_info_setting():
     image_str = request.values.get('image_str', '', type=str)
     user_id = request.values.get('user_id', '', type=str)
     nickname = request.values.get('nickname', u'', type=unicode)
-    signature = request.values.get('signature', u'', type=unicode)
     sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
     user = User.query.get(user_id)
     if user and sex_isvalid(sex):
@@ -207,7 +206,6 @@ def personal_info_setting():
                 data['message'] = NOT_IMAGE_MSG
                 return jsonify(data)
         user.nickname = nickname
-        user.signature = signature
         user.sex = sex
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG

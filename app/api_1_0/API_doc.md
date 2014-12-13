@@ -199,14 +199,13 @@ follow_list
 personal_info_setting
 ---
     URL:
-        /api/v1.0/personal_info_setting?user_id=&image_str=&nickname=&signature=&sex=
+        /api/v1.0/personal_info_setting?user_id=&image_str=&nickname=&sex=
     method:
         get
     parameters:
         user_id
         image_str: base64 string 如果用户没有更换头像，可以为空
-        nickname: 无论用户是否重新设置了昵称和签名，每次调用接口都必须发送当前的昵称、签名和性别
-        signature
+        nickname: 无论用户是否重新设置了昵称和性别，每次调用接口都必须发送当前的昵称、性别
         sex: 0 for female, 1 for male, 2 for unknown
     json:
         {"status": 0, "message": "success"}
@@ -320,7 +319,7 @@ profile_posts
 post
 ---
     URL:
-        /api/v1.0/post      目前暂时在浏览器里用get方式直接打开可以上传图片
+        /api/v1.0/post
     method:
         get
     parameters:
@@ -387,13 +386,15 @@ get_channels
     method:
         get
     json:
-        {"status": 0, "message": "success", "channels": [{"channel_id": "", "channel": ""}]}
+        {"status": 0, "message": "success", "channels": [{"channel_id": "", "channel": "", "panel": "", "navbar": ""}]}
         
         status: int, 0 for success
         message: str, message of status code
         channels: a list of all channels dict
             channel_id: int
             channel: unicode name of channel
+            panel: url of panel, str
+            navbar: url of panel, str
             
             
 get_posts
