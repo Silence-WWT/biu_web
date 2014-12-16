@@ -319,6 +319,16 @@ profile_posts
                 user_id: int
                 nickname: unicode
                 avatar: str
+            comments: a list of comments dict in first page
+                post_id: int
+                created: 弹幕发送的时间，1970.1.1 开始的秒数  int
+                content: unicode
+                x: float
+                y: float
+                user: a dict of user
+                    user_id: int
+                    nickname: unicode
+                    avatar: str
 
         
 post

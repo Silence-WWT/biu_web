@@ -151,14 +151,19 @@ def profile():
 
 @api.route('/profile_posts')
 def profile_posts():
-    data = {'posts': {}}
+    data = {'posts': []}
     user_id = request.values.get('user_id', '', type=str)
     target_id = request.values.get('target_id', '', type=str)
     page = request.values.get('page', 1, type=int)
     identity = request.values.get('identity', '', type=str)
     target = User.query.get(target_id)
     if target:
-        data['posts'] = target.get_self_posts(page, user_id, identity)
+        post_dicts = target.get_self_posts(page, user_id, identity)
+        for post_dict in post_dicts:
+            post_ = Post.query.get(post_dict['post_id'])
+            post_dict['comments'] = post_.get_comments_dict(current_app.config['FIRST_PAGE'],
+                                                            current_app.config['COMMENTS_PER_PAGE'])
+            data['posts'].append(post_dict)
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:
