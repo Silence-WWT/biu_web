@@ -207,6 +207,7 @@ def personal_info_setting():
                 return jsonify(data)
         user.nickname = nickname
         user.sex = sex
+        data['user'] = user.get_personal_info_dict()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:

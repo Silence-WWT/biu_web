@@ -90,7 +90,7 @@ class User(UserMixin, db.Model):
             'user_id': self.id,
             'nickname': self.nickname,
             'golds': self.golds,
-            'avatar': current_app.config['STATIC_URL'] + self.avatar if self.avatar else '',
+            'avatar': self.get_avatar(),
             'signature': self.signature,
             'sex': self.sex,
             'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
@@ -107,7 +107,15 @@ class User(UserMixin, db.Model):
         return {
             'user_id': self.id,
             'nickname': self.nickname,
-            'avatar': current_app.config['STATIC_URL'] + self.avatar if self.avatar else ''
+            'avatar': self.get_avatar()
+        }
+
+    def get_personal_info_dict(self):
+        return {
+            'user_id': self.id,
+            'nickname': self.nickname,
+            'avatar': self.get_avatar(),
+            'sex': self.sex
         }
 
     def get_profile_dict(self, page, user_id, identity):
@@ -126,6 +134,9 @@ class User(UserMixin, db.Model):
         posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Post.created).\
             paginate(page, current_app.config['HOME_PAGE_POSTS_PER_PAGE'], False).items
         return [post.get_post_info_dict(user_id, identity) for post in posts]
+
+    def get_avatar(self):
+        return current_app.config['STATIC_URL'] + self.avatar if self.avatar else ''
 
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':

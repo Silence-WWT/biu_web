@@ -208,10 +208,15 @@ personal_info_setting
         nickname: 无论用户是否重新设置了昵称和性别，每次调用接口都必须发送当前的昵称、性别
         sex: 0 for female, 1 for male, 2 for unknown
     json:
-        {"status": 0, "message": "success"}
+        {"status": 0, "message": "success", "user": {"user_id"： "", "avatar": "", "nickname": "", "sex": ""}}
         
         status: int, 0 for success, 1004 for invalid image, 1002 for user not exists
         message: str, message of status code
+        user: a dict of user's info
+            user_id: int
+            avatar: str
+            nickname: unicode
+            sex: int
         
         
 push_setting
