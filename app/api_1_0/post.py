@@ -240,10 +240,10 @@ def report():
     user_id = request.values.get('user_id', '', type=str)
     type_ = request.values.get('type', '', type=str)
     if type_ == 'post':
-        target = PostReport.query.get(target_id)
+        target = Post.query.get(target_id)
         target_class = PostReport
     elif type_ == 'post_comment':
-        target = PostCommentReport.query.get(target_id)
+        target = PostComment.query.get(target_id)
         target_class = PostCommentReport
     else:
         data['status'] = PARAMETER_ERROR
