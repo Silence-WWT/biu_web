@@ -61,18 +61,20 @@ class Push(object):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = device_token
+        self._push_params['device_tokens'] = 'AhCrzhfKzPtP3xM8XUXLvRSeRw2Tox472FOHG6fothDo'
         self._push_params['payload']['body'] = {'custom': message}
 
     def push_unicast(self, message_type, target, user, comment=''):
         message = self._generate_push_message(message_type, user, comment)
         self._generate_push_params(target.identity, message)
         resp = requests.post(self._message_post_url, data=json.dumps(self._push_params))
+        print(self._push_params)
         return self._is_push_success(resp)
 
     @staticmethod
     def _is_push_success(resp):
         resp = json.loads(resp.text.decode('utf8'))
+        print(resp)
         if resp['ret'] == 'SUCCESS':
             return True
         return False
