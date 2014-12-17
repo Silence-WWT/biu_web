@@ -577,5 +577,5 @@ def generate_fake_image_path():
 
 
 def test_message():
-    from utils._message import push
-    push('comment', User.query.get(4), User.query.get(1), 'aslkdflsf')
+    from utils import push
+    push('comment', User.query.get(4), User.query.get(1), u'富贵全靠大左')
