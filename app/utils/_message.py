@@ -47,6 +47,7 @@ class Push(object):
         return hashlib.md5(self._app_key + self._app_master_secret + self._timestamp).hexdigest()
 
     def _generate_push_message(self, message_type, user, comment):
+        self._push_params['payload']['body']['ticker'] = message_type
         if message_type == 'follow':
             self._push_params['payload']['user'] = user.get_brief_info_dict()
             return u'%s 关注了你' % user.nickname
@@ -57,14 +58,7 @@ class Push(object):
             return u'你的图片包含政治不正确的信息哦'
 
     def _generate_push_params(self, device_token, message):
-        self._timestamp = str(int(time_now()))
-        self._push_params['appkey'] = self._app_key
-        self._push_params['timestamp'] = self._timestamp
-        self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = 'AhCrzhfKzPtP3xM8XUXLvRSeRw2Tox472FOHG6fothDo'
-        self._push_params['payload']['body']['ticker'] = u'男神bug改完了？'
-        self._push_params['payload']['body']['title'] = 'Biu'
-        self._push_params['payload']['body']['text'] = u'富贵全靠男神'
+        pass
 
     def push_unicast(self, message_type, target, user, comment=''):
         message = self._generate_push_message(message_type, user, comment)
@@ -86,6 +80,15 @@ class AndroidPush(Push):
     _app_key = '5481dfebfd98c5b418000768'
     _app_master_secret = 'hzwow371z3gbzplz3uvgonytmzexyxyy'
 
+    def _generate_push_params(self, device_token, message):
+        self._timestamp = str(int(time_now()))
+        self._push_params['appkey'] = self._app_key
+        self._push_params['timestamp'] = self._timestamp
+        self._push_params['validation_token'] = self._get_validation_token()
+        self._push_params['device_tokens'] = device_token
+        self._push_params['payload']['body']['title'] = 'Biu'
+        self._push_params['payload']['body']['text'] = message
+
 
 class IosPush(Push):
     _app_key = '5481e1b2fd98c5b418000a99'
@@ -97,5 +100,5 @@ class IosPush(Push):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = '2ec6db4cdedb923d9ae19cc2a489157f292d900d8306a4e3c0fc8a69d56935a3'
+        self._push_params['device_tokens'] = device_token
         self._push_params['payload']['aps'] = {'alert': message}
