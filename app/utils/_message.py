@@ -34,12 +34,12 @@ class Push(object):
         'type': 'unicast',
         'payload': {
             'display_type': 'notification',
-            # 'body': {
-                # 'ticker': 'Hello World',
-                # 'title': '你好',
-                # 'text': '来自友盟推送',
-                # 'after_open': 'go_app'
-            # }
+            'body': {
+                'ticker': '',
+                'title': '',
+                'text': '',
+                'after_open': 'go_app'
+            }
         }
     }
 
@@ -62,7 +62,9 @@ class Push(object):
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
         self._push_params['device_tokens'] = 'AhCrzhfKzPtP3xM8XUXLvRSeRw2Tox472FOHG6fothDo'
-        self._push_params['payload']['body'] = {'custom': message}
+        self._push_params['payload']['body']['ticker'] = u'男神bug改完了？'
+        self._push_params['payload']['body']['title'] = 'Biu'
+        self._push_params['payload']['body']['text'] = u'富贵全靠男神'
 
     def push_unicast(self, message_type, target, user, comment=''):
         message = self._generate_push_message(message_type, user, comment)
