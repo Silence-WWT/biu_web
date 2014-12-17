@@ -5,7 +5,7 @@ from ..models import User, Fan, Post, PostLike, PostReport, PostShare, PostComme
     Channel, Society
 from . import api
 from app import db
-from app.utils.image import upload_image
+from app.utils import upload_image
 from api_constants import *
 
 

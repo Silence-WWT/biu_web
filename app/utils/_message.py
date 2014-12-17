@@ -3,7 +3,7 @@ import hashlib
 import json
 import requests
 
-from time_now import time_now
+from . import time_now
 
 android_push = None
 ios_push = None

@@ -6,7 +6,7 @@ from flask.ext.login import UserMixin
 from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
 
 from app import db
-from utils.time_now import time_now
+from utils import time_now
 
 seed()
 
@@ -577,5 +577,5 @@ def generate_fake_image_path():
 
 
 def test_message():
-    from utils.message import push
+    from utils._message import push
     push('comment', User.query.get(4), User.query.get(1), 'aslkdflsf')

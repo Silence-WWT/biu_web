@@ -4,9 +4,7 @@ from sqlalchemy import func, desc
 
 from app import db
 from app.models import User, Fan, ThirdPartyUser, Society, Post
-from app.utils.image import upload_image, get_image_from_url
-from app.utils.sex import sex_isvalid
-from app.utils.verification import sms_captcha, redis_check, third_party_token
+from app.utils import sex_isvalid, upload_image, get_image_from_url, sms_captcha, redis_check, third_party_token
 from . import api
 from api_constants import *
 
