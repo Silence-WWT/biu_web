@@ -587,6 +587,22 @@ report
         message: str, message of status
 
 
+delete
+---
+    URL:
+        /api/v1.0/delete?user_id=&post_id=
+    method:
+        get
+    parameters:
+        user_id
+        post_id:
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: int, 0 for success, 2000 for parameter error
+        message: str, message of status
+
+
 up_reword
 ---
     URL:

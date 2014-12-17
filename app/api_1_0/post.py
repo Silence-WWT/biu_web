@@ -267,6 +267,24 @@ def report():
     return jsonify(data)
 
 
+@api.route('/delete')
+def delete():
+    data = {}
+    post_id = request.values.get('post_id', '', type=str)
+    user_id = request.values.get('user_id', '', type=str)
+    user = User.query.get(user_id)
+    post_ = Post.query.get(post_id)
+    if user and post_ and user.id == post_.user_id:
+        if not post_.is_deleted:
+            post_.is_deleted = True
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
+
+
 @api.route('/up_reword')
 def up_reword():
     data = {}
