@@ -11,7 +11,7 @@ ios_push = None
 
 def push(message_type, target, user, comment=''):
     global android_push, ios_push
-    if target.device != 0:
+    if target.device == 0:
         if android_push is None:
             device_push = android_push = AndroidPush()
         else:
@@ -86,9 +86,9 @@ class AndroidPush(Push):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = device_token
+        self._push_params['device_tokens'] = 'AhCrzhfKzPtP3xM8XUXLvRSeRw2Tox472FOHG6fothDo'
         self._push_params['payload']['body']['title'] = 'Biu'
-        self._push_params['payload']['body']['text'] = message
+        self._push_params['payload']['body']['text'] = u'富贵全靠男神'
 
 
 class IosPush(Push):
