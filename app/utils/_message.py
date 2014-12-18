@@ -11,7 +11,7 @@ ios_push = None
 
 def push(message_type, target, user, comment=''):
     global android_push, ios_push
-    if target.device == 0:
+    if target.device != 0:
         if android_push is None:
             device_push = android_push = AndroidPush()
         else:
@@ -40,7 +40,8 @@ class Push(object):
                 'text': '',
                 'after_open': 'go_app'
             }
-        }
+        },
+        'production_mode': 'false'
     }
 
     def _get_validation_token(self):
@@ -100,5 +101,5 @@ class IosPush(Push):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = device_token
+        self._push_params['device_tokens'] = '2ec6db4cdedb923d9ae19cc2a489157f292d900d8306a4e3c0fc8a69d56935a3'
         self._push_params['payload']['aps'] = {'alert': message}
