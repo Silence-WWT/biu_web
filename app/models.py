@@ -169,7 +169,7 @@ class User(UserMixin, db.Model):
 
     def get_message_list(self, page):
         message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created).\
-            paginaate(page, 20, False).items
+            paginate(page, 20, False).items
         messages = [message.get_detail() for message in message_list]
         return messages
 
@@ -569,6 +569,23 @@ class Message(db.Model):
         else:
             detail['format'] = u'你的图片包含政治不正确的信息哦，我已经报警了!'
         return detail
+
+    @staticmethod
+    def generate():
+        message_type = MessageType.query.filter_by(type='comment').first()
+        comments = PostComment.query.all()
+        for comment in comments:
+            launch = User.query.get(comment.user_id)
+            user = User.query.get(comment.get_post().get_user().id)
+            db.session.add(Message(message_type.id, user.id, launch.id, comment.id))
+        db.session.commit()
+        message_type = MessageType.query.filter_by(type='follow').first()
+        fans = Fan.query.all()
+        for fan in fans:
+            launch = fan.get_user_or_idol(0)
+            user = fan.get_user_or_idol(1)
+            db.session.add(Message(message_type.id, user.id, launch.id))
+        db.session.commit()
 
 
 class MessageType(db.Model):
