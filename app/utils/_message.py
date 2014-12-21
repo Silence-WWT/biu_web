@@ -38,7 +38,7 @@ class Push(object):
                 'ticker': '',
                 'title': '',
                 'text': '',
-                'after_open': 'go_app'
+                'after_open': 'go_activity'
             }
         },
         'production_mode': 'false'
@@ -95,7 +95,7 @@ class AndroidPush(Push):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = 'AhCrzhfKzPtP3xM8XUXLvRSeRw2Tox472FOHG6fothDo'
+        self._push_params['device_tokens'] = 'AqzvPre6xjFCu3931682tHScMYlALNYDr6OceLaXNGeu'
         self._push_params['payload']['body']['title'] = 'Biu'
         self._push_params['payload']['body']['text'] = u'富贵全靠男神'
 
