@@ -38,7 +38,8 @@ class Push(object):
                 'ticker': '',
                 'title': '',
                 'text': '',
-                'after_open': 'go_activity'
+                'after_open': 'go_activity',
+                'activity': 'com.striker.biu.activity.MessageActivity'
             }
         },
         'production_mode': 'false'
