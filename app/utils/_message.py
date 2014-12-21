@@ -49,6 +49,7 @@ class Push(object):
 
     def _generate_push_message(self, message_type, user, comment):
         self._push_params['payload']['body']['ticker'] = message_type
+        self._push_params['description'] = message_type
         if message_type == 'follow':
             self._push_params['payload']['user'] = user.get_brief_info_dict()
             return u'%s 关注了你' % user.nickname
