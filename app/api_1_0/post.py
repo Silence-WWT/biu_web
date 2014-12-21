@@ -130,10 +130,11 @@ def post_detail():
     post_id = request.values.get('post_id', '', type=str)
     user_id = request.values.get('user_id', '', type=str)
     identity = request.values.get('identity', '', type=str)
+    comment_id = request.values.get('comment_id', '', type=str)
     post_ = Post.query.get(post_id)
     if post_ and (user_id or identity):
         data['post'] = post_.get_post_info_dict(user_id, identity)
-        data['post']['comments'] = post_.get_comments_dict(1, 10)
+        data['post']['comments'] = post_.get_comments_dict(1, 10, comment_id)
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     elif not post_:

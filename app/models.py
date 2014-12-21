@@ -291,10 +291,24 @@ class Post(db.Model):
         }
         return post_dict
 
-    def get_comments_dict(self, page, per_page):
+    def get_comments_dict(self, page, per_page, comment_id=None):
+        if comment_id:
+            comment = PostComment.query.filter_by(post_id=self.id, id=comment_id).limit(1).first()
+        else:
+            comment = None
         comments = PostComment.query.filter_by(post_id=self.id, is_deleted=False).order_by(-PostComment.created).\
             paginate(page, per_page, False).items
-        return [comment.get_comment_info() for comment in comments]
+        if comment:
+            comment_list = [comment]
+            if comment not in comments:
+                comment_list.extend(comments)
+            else:
+                for comment_ in comments:
+                    if comment_ not in comment_list:
+                        comment_list.append(comment_)
+        else:
+            comment_list = comments
+        return [comment_.get_comment_info() for comment_ in comment_list]
 
     def add_likes_count(self):
         self.likes_count += 1
