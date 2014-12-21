@@ -505,7 +505,7 @@ post_detail
         identity: user_id 与 identity 必须有一项不为空
         comment_id: 可选.若传此参数，可额外返回对应的评论
     json:
-        {"status": 0, "message": "success", "posts": {"channel_id": "", "content": "", "created": "", "image": "",
+        {"status": 0, "message": "success", "post": {"channel_id": "", "content": "", "created": "", "image": "",
             "comments_count": "", "post_id": "", "likes_count": "", "share_count": "", "is_liked": "",
             "user": {"avatar": "", "user_id": "", "nickname": ""},
             "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
