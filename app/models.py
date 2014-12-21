@@ -81,9 +81,11 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(password, self.password_hash, self.salt)
 
-    def update_identity(self, identity):
+    def update_identity_device(self, identity, device):
         if identity and identity != self.identity:
             self.identity = identity
+        if device != self.device:
+            self.device = device
 
     def get_self_info_dict(self, is_self=True):
         user_dict = {

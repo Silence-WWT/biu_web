@@ -38,7 +38,7 @@ confirm_mobile
 register
 ---
     URL:
-        /api/v1.0/register?password=&identity=&email=&token=
+        /api/v1.0/register?password=&identity=&email=&token=&device=
     method:
         get
     parameters:
@@ -46,6 +46,7 @@ register
         identity: uuid
         email: 必须
         token
+        device: default 0, 0 for Android, 1 for iOS
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
@@ -71,13 +72,14 @@ register
 login
 ---
     URL:
-        /api/v1.0/login?email=&password=&identity=
+        /api/v1.0/login?email=&password=&identity=&device=
     method:
         get
     parameters:
         email
         password
         identity
+        device: default 0, 0 for Android, 1 for iOS
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
@@ -103,7 +105,7 @@ login
 third_party_login
 ---
     URL:
-        /api/v1.0/third_party_login?token=&identity=&society_id=&society_user_id=&nickname=&sex=&avatar=
+        /api/v1.0/third_party_login?token=&identity=&society_id=&society_user_id=&nickname=&sex=&avatar=&device=
     method:
         get
     parameters:
@@ -114,6 +116,7 @@ third_party_login
         nickname
         sex: 0 female, 1 male, 2 unknown
         avatar: 头像的url
+        device: default 0, 0 for Android, 1 for iOS
     json:
         {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",

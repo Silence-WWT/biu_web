@@ -41,6 +41,7 @@ def register():
     identity = request.values.get('identity', '', type=str)
     email = request.values.get('email', '', type=str)
     token = request.values.get('token', '', type=str)
+    device = request.values.get('device', 0, type=int)
     user = User.query.filter_by(email=email).limit(1).first()
     if user:
         data['status'] = EMAIL_EXIST
@@ -54,6 +55,7 @@ def register():
             password=password,
             email=email,
             identity=identity,
+            device=device
         )
         db.session.add(user)
         db.session.commit()
@@ -72,9 +74,10 @@ def login():
     email = request.values.get('email', '', type=str)
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
+    device = request.values.get('device', 0, type=int)
     user = User.query.filter_by(email=email).limit(1).first()
     if user and user.verify_password(password):
-        user.update_identity(identity)
+        user.update_identity_device(identity, device)
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
         data['user'] = user.get_self_info_dict()
@@ -88,6 +91,7 @@ def login():
 def third_party_login():
     data = {'user': {}}
     identity = request.values.get('identity', '', type=str)
+    device = request.values.get('device', 0, type=int)
     society_id = request.values.get('society_id', 0, type=int)
     society_user_id = request.values.get('society_user_id', '', type=str)
     token = request.values.get('token', '', type=str)
@@ -110,7 +114,8 @@ def third_party_login():
                 password='',
                 email='',
                 sex=sex,
-                avatar=get_image_from_url(user_id, avatar)
+                avatar=get_image_from_url(user_id, avatar),
+                device=device
             )
             db.session.add(user)
             third_party_user = ThirdPartyUser(
@@ -120,7 +125,10 @@ def third_party_login():
             )
             db.session.add(third_party_user)
             db.session.commit()
-        data['user'] = third_party_user.get_user().get_self_info_dict()
+        else:
+            user = third_party_user.get_user()
+            user.update_identity_device(identity, device)
+        data['user'] = user.get_self_info_dict()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:
