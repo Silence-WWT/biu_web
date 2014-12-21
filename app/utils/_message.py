@@ -48,16 +48,7 @@ class Push(object):
         return hashlib.md5(self._app_key + self._app_master_secret + self._timestamp).hexdigest()
 
     def _generate_push_message(self, message_type, user, comment):
-        self._push_params['payload']['body']['ticker'] = message_type
-        self._push_params['description'] = message_type
-        if message_type == 'follow':
-            self._push_params['payload']['user'] = user.get_brief_info_dict()
-            return u'%s 关注了你' % user.nickname
-        elif message_type == 'comment':
-            self._push_params['payload']['user'] = user.get_brief_info_dict()
-            return u'%s biu了你的图片: %s' % (user.nickname, comment)
-        elif message_type == 'delete_post':
-            return u'你的图片包含政治不正确的信息哦'
+        pass
 
     def _generate_push_params(self, device_token, message):
         pass
@@ -82,12 +73,29 @@ class AndroidPush(Push):
     _app_key = '5481dfebfd98c5b418000768'
     _app_master_secret = 'hzwow371z3gbzplz3uvgonytmzexyxyy'
 
+    def _generate_push_message(self, message_type, user, comment):
+        self._push_params['payload']['body']['ticker'] = message_type
+        if message_type == 'follow' or message_type == 'comment':
+            self._push_params['payload']['extra'] = {
+                'message_type': message_type,
+                'user_id': user.id,
+                'nickname': user.nickname,
+                'avatar': user.get_avatar()
+            }
+            if message_type == 'follow':
+                return u'%s 关注了你' % user.nickname
+            else:
+                return u'%s biu了你的图片: %s' % (user.nickname, comment)
+        elif message_type == 'delete_post':
+            self._push_params['payload']['extra'] = {'message_type': message_type}
+            return u'你的图片包含政治不正确的信息哦'
+
     def _generate_push_params(self, device_token, message):
         self._timestamp = str(int(time_now()))
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = 'AhCrzhfKzPtP3xM8XUXLvRSeRw2Tox472FOHG6fothDo'
+        self._push_params['device_tokens'] = 'AqzvPre6xjFCu3931682tHScMYlALNYDr6OceLaXNGeu'
         self._push_params['payload']['body']['title'] = 'Biu'
         self._push_params['payload']['body']['text'] = u'富贵全靠男神'
 
@@ -95,6 +103,19 @@ class AndroidPush(Push):
 class IosPush(Push):
     _app_key = '5481e1b2fd98c5b418000a99'
     _app_master_secret = 'eurxcpfruvk7rmhir7cpelbo0lmsmsgj'
+
+    def _generate_push_message(self, message_type, user, comment):
+        self._push_params['payload']['message_type'] = message_type
+        if message_type == 'follow' or message_type == 'comment':
+            self._push_params['payload']['user_id'] = user.id
+            self._push_params['payload']['nickname'] = user.nickname
+            self._push_params['payload']['avatar'] = user.get_avatar()
+            if message_type == 'follow':
+                return u'%s 关注了你' % user.nickname
+            else:
+                return u'%s biu了你的图片: %s' % (user.nickname, comment)
+        elif message_type == 'delete_post':
+            return u'你的图片包含政治不正确的信息哦'
 
     def _generate_push_params(self, device_token, message):
         print(self._app_key, self._app_master_secret)
