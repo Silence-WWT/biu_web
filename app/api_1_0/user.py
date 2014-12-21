@@ -281,6 +281,22 @@ def follow_list():
     return jsonify(data)
 
 
+@api.route('/message_list')
+def message_list():
+    data = {}
+    user_id = request.values.get('user_id', '', type=str)
+    user = User.query.get(user_id)
+    page = request.values.get('page', 1, type=int)
+    if user:
+        data['messages'] = user.get_message_list(page)
+        data['status'] = SUCCESS
+        data['message'] = SUCCESS_MSG
+    else:
+        data['status'] = USER_NOT_EXIST
+        data['message'] = USER_NOT_EXIST_MSG
+    return jsonify(data)
+
+
 @api.route('/active_users')
 def active_users():
     data = {

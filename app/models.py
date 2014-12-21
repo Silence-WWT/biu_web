@@ -167,6 +167,12 @@ class User(UserMixin, db.Model):
             return Fan.query.filter_by(idol_id=self.id, is_deleted=False).order_by(-Fan.created). \
                 paginate(page, per_page, False).items
 
+    def get_message_list(self, page):
+        message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created).\
+            paginaate(page, 20, False).items
+        messages = [message.get_detail() for message in message_list]
+        return messages
+
     @staticmethod
     def generate_fake(count=1000):
         from faker import Factory
@@ -512,6 +518,56 @@ class PostCommentReport(db.Model):
 
     def get_post(self):
         return Post.query.get(self.post_id)
+
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.Integer, default=time_now, nullable=False)
+    message_type_id = db.Column(db.SmallInteger, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    launch_id = db.Column(db.Integer, nullable=False)
+    post_comment_id = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, message_type_id, user_id, launch_id, post_comment_id=0):
+        self.message_type_id = message_type_id
+        self.user_id = user_id
+        self.launch_id = launch_id
+        self.post_comment_id = post_comment_id
+
+    def get_detail(self):
+        message_type = MessageType.query.get(self.message_type_id)
+        detail = {
+            'message_type': message_type.type,
+            'created': self.created
+        }
+        if message_type.type == 'comment' or message_type.type == 'follow':
+            launch = User.query.get(self.launch_id)
+            detail['user'] = launch.get_brief_info_dict()
+            if message_type.type == 'comment':
+                detail['post_comment_id'] = self.post_comment_id
+                post_comment = PostComment.query.get(self.post_comment_id)
+                detail['post_id'] = post_comment.post_id
+                detail['content'] = post_comment.content
+                detail['format'] = u'biu了你的图片'
+            else:
+                detail['format'] = u'关注了你'
+        else:
+            detail['format'] = u'你的图片包含政治不正确的信息哦，我已经报警了!'
+        return detail
+
+
+class MessageType(db.Model):
+    __tablename__ = 'message_types'
+    id = db.Column(db.SmallInteger, primary_key=True)
+    type = db.Column(db.String(20), nullable=False)
+
+    @staticmethod
+    def generate():
+        db.session.add(MessageType(type='comment'))
+        db.session.add(MessageType(type='follow'))
+        db.session.add(MessageType(type='delete_post'))
+        db.session.commit()
 
 
 class Channel(db.Model):

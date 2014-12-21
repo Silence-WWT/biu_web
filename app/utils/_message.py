@@ -89,7 +89,7 @@ class AndroidPush(Push):
                 return u'%s biu了你的图片: %s' % (user.nickname, comment)
         elif message_type == 'delete_post':
             self._push_params['payload']['extra'] = {'message_type': message_type}
-            return u'你的图片包含政治不正确的信息哦'
+            return u'你的图片包含政治不正确的信息哦，我已经报警了！'
 
     def _generate_push_params(self, device_token, message):
         self._timestamp = str(int(time_now()))

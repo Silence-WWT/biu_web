@@ -199,6 +199,35 @@ follow_list
             is_following: 调用这个接口的用户是否已关注该用户 bool
 
 
+message_list
+---
+    URL:
+        /api/v1.0/message_list?user_id=&page=
+    method:
+        get
+    parameters:
+        user_id
+        page
+    json:
+        {"status": 0, "message": "success", "messages":[{"message_type": "", "created": "", "format":"", "", "post_id": "", 
+            "post_comment_id": "", "content": "", "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
+        
+        status: int, 0 for success, 2000 for parameters error
+        message: str, message of status code
+        messages: a list of message
+            message_type: str. "comment" OR "follow" OR "delete post"
+            created: int.
+            format: unicode. 不含用户昵称的字符串 "biu了你的图片一下" OR "关注了你" OR "你的图片包含政治不正确的信息哦，我已经报警了!"
+                    考虑到用户昵称颜色以及点击事件、布局上可能的需要，特地把消息字符串分割开发了……
+            post_id: int. 当message_type为"comment"时才返回
+            post_comment_id: int. 当message_type为"comment"时才返回
+            content: unicode. 当message_type为"comment"时才返回
+            user: a dict of user's info.当message_type为"comment" OR "follow"时才返回
+                user_id: int
+                avatar: str
+                nickname: unicode
+
+
 personal_info_setting
 ---
     URL:
@@ -467,13 +496,14 @@ get_posts
 post_detail
 ---
     URL:
-        /api/v1.0/get_post_comments?post_id=&user_id=&identity=
+        /api/v1.0/get_post_comments?post_id=&user_id=&identity=&comment_id=
     method:
         get
     parameters:
         post_id
         user_id
         identity: user_id 与 identity 必须有一项不为空
+        comment_id: 可选.若传此参数，可额外返回对应的评论
     json:
         {"status": 0, "message": "success", "posts": {"channel_id": "", "content": "", "created": "", "image": "",
             "comments_count": "", "post_id": "", "likes_count": "", "share_count": "", "is_liked": "",
