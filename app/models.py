@@ -168,8 +168,8 @@ class User(UserMixin, db.Model):
                 paginate(page, per_page, False).items
 
     def get_message_list(self, page):
-        message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created).\
-            paginate(page, 20, False).items
+        message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created)\
+            #  .paginate(page, 20, False).items
         messages = [message.get_detail() for message in message_list]
         return messages
 
@@ -231,6 +231,7 @@ class Fan(db.Model):
     @staticmethod
     def generate_fake(count):
         user_count = User.query.count()
+        message_type = MessageType.query.filter_by(message_type='follow').first()
         for i in range(1, user_count + 1):
             random_count = randrange(0, count + 1)
             user_set = set()
@@ -240,6 +241,7 @@ class Fan(db.Model):
                     user_set.add(rand)
             for j in user_set:
                 db.session.add(Fan(user_id=i, idol_id=j))
+                db.session.add(Message(message_type.id, j, i))
             db.session.commit()
 
 
@@ -437,6 +439,7 @@ class PostComment(db.Model):
         post_count = Post.query.count()
         user_count = User.query.count()
         fake_func_list = (zh.address, zh.name, zh.company, zh.country)
+        message_type = MessageType.query.filter_by(message_type='comment').first()
         for i in range(1, user_count + 1):
             random_count = randrange(0, count + 1)
             post_set = set()
@@ -444,10 +447,11 @@ class PostComment(db.Model):
                 post_set.add(randrange(1, post_count + 1))
             for j in post_set:
                 content_length = randint(1, 4)
-                db.session.add(PostComment(
+                comment = PostComment(
                     user_id=i, post_id=j, x=random(), y=random(),
                     content=''.join((i() for i in fake_func_list[:content_length])).replace('\n', ''))
-                )
+                db.session.add(comment)
+                db.session.add(Message(message_type.id, Post.query.get(j).get_user().id, i, comment.id))
             db.session.commit()
 
 
@@ -643,6 +647,7 @@ class Society(db.Model):
 def generate_helper_data():
     Channel.generate()
     Society.generate()
+    MessageType.generate()
 
 
 def generate_fake_data(user_count=1000, fan_count=100, post_count=15, post_like_count=100,
