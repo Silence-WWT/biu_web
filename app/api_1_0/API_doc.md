@@ -496,7 +496,7 @@ get_posts
 post_detail
 ---
     URL:
-        /api/v1.0/get_post_comments?post_id=&user_id=&identity=&comment_id=
+        /api/v1.0/post_detail?post_id=&user_id=&identity=&comment_id=
     method:
         get
     parameters:
@@ -513,7 +513,7 @@ post_detail
         
         status: int, 0 for success, 1002 for user not exist
         message: str, message for status code
-        posts: a dict of post info
+        post: a dict of post info
             post_id: int
             created: int
             image: str
