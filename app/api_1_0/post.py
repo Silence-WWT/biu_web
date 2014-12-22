@@ -50,7 +50,7 @@ def post_comment():
     if not user:
         data['status'] = USER_NOT_EXIST
         data['message'] = USER_NOT_EXIST_MSG
-    elif post_ and not post_.is_deleted and content:
+    elif post_ and not post_.is_deleted:
         comment = PostComment(
             post_id=post_id,
             user_id=user_id,
