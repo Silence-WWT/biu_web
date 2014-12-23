@@ -210,7 +210,7 @@ message_list
         page
     json:
         {"status": 0, "message": "success", "messages":[{"message_type": "", "created": "", "format":"", "", "post_id": "", 
-            "post_comment_id": "", "content": "", "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
+            "post_comment_id": "", "content": "", "is_read": "", "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
         
         status: int, 0 for success, 2000 for parameters error
         message: str, message of status code
@@ -222,10 +222,27 @@ message_list
             post_id: int. 当message_type为"comment"时才返回
             post_comment_id: int. 当message_type为"comment"时才返回
             content: unicode. 当message_type为"comment"时才返回
+            is_read: 0 未读, 1 已读. int
             user: a dict of user's info.当message_type为"comment" OR "follow"时才返回
                 user_id: int
                 avatar: str
                 nickname: unicode
+
+
+message_read
+---
+    URL:
+        /api/v1.0/message_read?user_id=&message_id=
+    method:
+        get
+    parameters:
+        user_id
+        message_id
+    json:
+        {"status": 0, "message": "success"}
+        
+        status: int, 0 for success, 2000 for parameters error
+        message: str, message of status code
 
 
 personal_info_setting
