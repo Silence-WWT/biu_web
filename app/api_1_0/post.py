@@ -5,7 +5,7 @@ from ..models import User, Fan, Post, PostLike, PostReport, PostShare, PostComme
     Channel, Society, Message, MessageType
 from . import api
 from app import db
-from app.utils import upload_image, push
+from app.utils import upload_image
 from api_constants import *
 
 comment_message_type = MessageType.query.filter_by('comment').first()
@@ -65,8 +65,7 @@ def post_comment():
         author = comment.get_post().get_user()
         author.add_golds('comment')
         #  TODO: 弹幕推送
-        message = Message(comment_message_type.id, author.id, user.id, comment.id)
-        push('comment', author, user, comment.content)
+        message = Message(comment_message_type, author, user, comment)
         db.session.add(message)
         db.session.commit()
         data['post_comment'] = comment.get_comment_info()
@@ -267,8 +266,7 @@ def report():
             db.session.commit()
             if target.report_delete() and isinstance(target, Post):
                 author = target.get_user()
-                message = Message(delete_message_type.id, author.id, 0, is_read=True)
-                push('delete_post', author, None)
+                message = Message(delete_message_type, author, None, is_read=True)
                 db.session.aad(message)
                 db.session.commit()
                 # TODO: 举报删除推送
