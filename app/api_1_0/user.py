@@ -8,8 +8,6 @@ from app.utils import sex_isvalid, upload_image, get_image_from_url, sms_captcha
 from . import api
 from api_constants import *
 
-follow_message_type = MessageType.query.filter_by('follow').first()
-
 
 @api.route('/register_token')
 def register_token():
@@ -240,6 +238,8 @@ def follow():
     if user and idol:
         fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id).limit(1).first()
         if not fan and not cancel:
+            follow_message_type = MessageType.query.filter_by(type='follow').first()
+            #  TODO: follow_message_type Factory
             fan = Fan(user_id=user_id, idol_id=idol_id)
             db.session.add(fan)
             message = Message(follow_message_type, idol, user)

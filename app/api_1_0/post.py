@@ -8,9 +8,6 @@ from app import db
 from app.utils import upload_image
 from api_constants import *
 
-comment_message_type = MessageType.query.filter_by('comment').first()
-delete_message_type = MessageType.query.filter_by('delete_post').first()
-
 
 @api.route('/post')
 def post():
@@ -54,6 +51,8 @@ def post_comment():
         data['status'] = USER_NOT_EXIST
         data['message'] = USER_NOT_EXIST_MSG
     elif post_ and not post_.is_deleted:
+        comment_message_type = MessageType.query.filter_by(type='comment').first()
+        #  TODO: comment_message_type Factory
         comment = PostComment(
             post_id=post_id,
             user_id=user_id,
@@ -265,6 +264,8 @@ def report():
             db.session.add(target_report)
             db.session.commit()
             if target.report_delete() and isinstance(target, Post):
+                delete_message_type = MessageType.query.filter_by(type='delete_post').first()
+                #  TODO: delete_message_type Factory
                 author = target.get_user()
                 message = Message(delete_message_type, author, None, is_read=True)
                 db.session.aad(message)

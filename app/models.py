@@ -6,7 +6,7 @@ from flask.ext.login import UserMixin
 from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
 
 from app import db
-from utils import time_now
+from utils import time_now, push
 
 seed()
 
@@ -424,6 +424,9 @@ class PostComment(db.Model):
     def get_post(self):
         return Post.query.get(self.post_id)
 
+    def get_user(self):
+        return self.get_post().get_user()
+
     def report_delete(self):
         reports_count = PostCommentReport.query.filter_by(post_comment_id=self.id).count()
         if self.is_deleted:
@@ -546,12 +549,15 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     launch_id = db.Column(db.Integer, nullable=False)
     post_comment_id = db.Column(db.Integer, nullable=False)
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, message_type_id, user_id, launch_id, post_comment_id=0):
-        self.message_type_id = message_type_id
-        self.user_id = user_id
-        self.launch_id = launch_id
-        self.post_comment_id = post_comment_id
+    def __init__(self, message_type, user, launch, post_comment=None, is_read=False):
+        self.message_type_id = message_type.id
+        self.user_id = user.id
+        self.launch_id = launch.id if launch else 0
+        self.post_comment_id = post_comment.id if post_comment else 0
+        self.is_read = is_read
+        push(message_type.type, user, launch, post_comment.content)
 
     def get_detail(self):
         message_type = MessageType.query.get(self.message_type_id)
