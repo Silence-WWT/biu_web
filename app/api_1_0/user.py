@@ -3,10 +3,12 @@ from flask import jsonify, request, current_app
 from sqlalchemy import func, desc
 
 from app import db
-from app.models import User, Fan, ThirdPartyUser, Society, Post
-from app.utils import sex_isvalid, upload_image, get_image_from_url, sms_captcha, redis_check, third_party_token
+from app.models import User, Fan, ThirdPartyUser, Society, Post, Message, MessageType
+from app.utils import sex_isvalid, upload_image, get_image_from_url, sms_captcha, redis_check, third_party_token, push
 from . import api
 from api_constants import *
+
+follow_message_type = MessageType.query.filter_by('follow').first()
 
 
 @api.route('/register_token')
@@ -240,8 +242,10 @@ def follow():
         if not fan and not cancel:
             fan = Fan(user_id=user_id, idol_id=idol_id)
             db.session.add(fan)
+            message = Message(follow_message_type.id, idol.id, user.id)
+            db.session.add(message)
+            push('follow', idol, user)
             db.session.commit()
-            # TODO: 关注推送
         elif fan and fan.is_deleted and not cancel:
             fan.is_deleted = False
         elif fan and cancel:

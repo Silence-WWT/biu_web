@@ -2,11 +2,13 @@
 from flask import request, jsonify, current_app
 
 from ..models import User, Fan, Post, PostLike, PostReport, PostShare, PostComment, PostCommentLike, PostCommentReport,\
-    Channel, Society
+    Channel, Society, Message, MessageType
 from . import api
 from app import db
-from app.utils import upload_image
+from app.utils import upload_image, push
 from api_constants import *
+
+comment_message_type = MessageType.query.filter_by('comment').first()
 
 
 @api.route('/post')
@@ -59,12 +61,15 @@ def post_comment():
             content=content
         )
         db.session.add(comment)
+        author = comment.get_post().get_user()
+        author.add_golds('comment')
+        message = Message(comment_message_type.id, author.id, user.id, comment.id)
+        push('comment', author, user, comment.content)
+        db.session.add(message)
         db.session.commit()
+        data['post_comment'] = comment.get_comment_info()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
-        data['post_comment'] = comment.get_comment_info()
-        comment.get_post().get_user().add_golds('comment')
-        # TODO: 评论推送
     else:
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
