@@ -315,6 +315,7 @@ def message_read():
     else:
         data['status'] = PARAMETER_ERROR
         data['message'] = PARAMETER_ERROR_MSG
+    return jsonify(data)
 
 
 @api.route('/active_users')
