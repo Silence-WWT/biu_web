@@ -9,6 +9,7 @@ from app.utils import upload_image, push
 from api_constants import *
 
 comment_message_type = MessageType.query.filter_by('comment').first()
+delete_message_type = MessageType.query.filter_by('delete_post').first()
 
 
 @api.route('/post')
@@ -63,6 +64,7 @@ def post_comment():
         db.session.add(comment)
         author = comment.get_post().get_user()
         author.add_golds('comment')
+        #  TODO: 弹幕推送
         message = Message(comment_message_type.id, author.id, user.id, comment.id)
         push('comment', author, user, comment.content)
         db.session.add(message)
@@ -263,8 +265,13 @@ def report():
             target_report = target_class(target_id, user_id)
             db.session.add(target_report)
             db.session.commit()
-            if target.report_delete():
-                pass  # TODO: 举报推送
+            if target.report_delete() and isinstance(target, Post):
+                author = target.get_user()
+                message = Message(delete_message_type.id, author.id, 0, is_read=True)
+                push('delete_post', author, None)
+                db.session.aad(message)
+                db.session.commit()
+                # TODO: 举报删除推送
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
     else:
