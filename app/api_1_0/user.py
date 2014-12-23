@@ -307,7 +307,7 @@ def message_read():
     message_id = request.values.get('message_id', '', type=str)
     user = User.query.get(user_id)
     message = Message.query.get(message_id)
-    if user and message and user.id == Message.user_id:
+    if user and message and user.id == message.user_id:
         if not message.is_read:
             message.is_read = True
         data['status'] = SUCCESS
