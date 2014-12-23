@@ -9,9 +9,9 @@ android_push = None
 ios_push = None
 
 
-def push(message_type, target, user, comment=''):
+def push(message_type, user, launch, comment=''):
     global android_push, ios_push
-    if target.device == 0:
+    if user.device == 0:
         if android_push is None:
             device_push = android_push = AndroidPush()
         else:
@@ -21,7 +21,7 @@ def push(message_type, target, user, comment=''):
             device_push = ios_push = IosPush()
         else:
             device_push = ios_push
-    return device_push.push_unicast(message_type, target, user, comment)
+    return device_push.push_unicast(message_type, user, launch, comment)
 
 
 class Push(object):
@@ -48,15 +48,15 @@ class Push(object):
     def _get_validation_token(self):
         return hashlib.md5(self._app_key + self._app_master_secret + self._timestamp).hexdigest()
 
-    def _generate_push_message(self, message_type, user, comment):
+    def _generate_push_message(self, message_type, launch, comment):
         pass
 
     def _generate_push_params(self, device_token, message):
         pass
 
-    def push_unicast(self, message_type, target, user, comment=''):
-        message = self._generate_push_message(message_type, user, comment)
-        self._generate_push_params(target.identity, message)
+    def push_unicast(self, message_type, user, launch, comment=''):
+        message = self._generate_push_message(message_type, launch, comment)
+        self._generate_push_params(user.identity, message)
         resp = requests.post(self._message_post_url, data=json.dumps(self._push_params))
         print(self._push_params)
         return self._is_push_success(resp)
@@ -74,19 +74,19 @@ class AndroidPush(Push):
     _app_key = '5481dfebfd98c5b418000768'
     _app_master_secret = 'hzwow371z3gbzplz3uvgonytmzexyxyy'
 
-    def _generate_push_message(self, message_type, user, comment):
+    def _generate_push_message(self, message_type, launch, comment):
         self._push_params['payload']['body']['ticker'] = message_type
         if message_type == 'follow' or message_type == 'comment':
             self._push_params['payload']['extra'] = {
                 'message_type': message_type,
-                'user_id': user.id,
-                'nickname': user.nickname,
-                'avatar': user.get_avatar()
+                'user_id': launch.id,
+                'nickname': launch.nickname,
+                'avatar': launch.get_avatar()
             }
             if message_type == 'follow':
-                return u'%s 关注了你' % user.nickname
+                return u'%s 关注了你' % launch.nickname
             else:
-                return u'%s biu了你的图片: %s' % (user.nickname, comment)
+                return u'%s biu了你的图片: %s' % (launch.nickname, comment)
         elif message_type == 'delete_post':
             self._push_params['payload']['extra'] = {'message_type': message_type}
             return u'你的图片包含政治不正确的信息哦，我已经报警了！'
@@ -105,16 +105,16 @@ class IosPush(Push):
     _app_key = '5481e1b2fd98c5b418000a99'
     _app_master_secret = 'eurxcpfruvk7rmhir7cpelbo0lmsmsgj'
 
-    def _generate_push_message(self, message_type, user, comment):
+    def _generate_push_message(self, message_type, launch, comment):
         self._push_params['payload']['message_type'] = message_type
         if message_type == 'follow' or message_type == 'comment':
-            self._push_params['payload']['user_id'] = user.id
-            self._push_params['payload']['nickname'] = user.nickname
-            self._push_params['payload']['avatar'] = user.get_avatar()
+            self._push_params['payload']['user_id'] = launch.id
+            self._push_params['payload']['nickname'] = launch.nickname
+            self._push_params['payload']['avatar'] = launch.get_avatar()
             if message_type == 'follow':
-                return u'%s 关注了你' % user.nickname
+                return u'%s 关注了你' % launch.nickname
             else:
-                return u'%s biu了你的图片: %s' % (user.nickname, comment)
+                return u'%s biu了你的图片: %s' % (launch.nickname, comment)
         elif message_type == 'delete_post':
             return u'你的图片包含政治不正确的信息哦'
 
