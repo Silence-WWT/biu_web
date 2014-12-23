@@ -563,7 +563,8 @@ class Message(db.Model):
         message_type = MessageType.query.get(self.message_type_id)
         detail = {
             'message_type': message_type.type,
-            'created': self.created
+            'created': self.created,
+            'is_read': self.is_read
         }
         if message_type.type == 'comment' or message_type.type == 'follow':
             launch = User.query.get(self.launch_id)

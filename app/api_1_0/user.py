@@ -300,6 +300,23 @@ def message_list():
     return jsonify(data)
 
 
+@api.route('/message_read')
+def message_read():
+    data = {}
+    user_id = request.values.get('user_id', '', type=str)
+    message_id = request.values.get('message_id', '', type=str)
+    user = User.query.get(user_id)
+    message = Message.query.get(message_id)
+    if user and message and user.id == Message.user_id:
+        if not message.is_read:
+            message.is_read = True
+        data['status'] = SUCCESS
+        data['messages'] = SUCCESS_MSG
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+
+
 @api.route('/active_users')
 def active_users():
     data = {
