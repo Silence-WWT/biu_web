@@ -557,7 +557,8 @@ class Message(db.Model):
         self.launch_id = launch.id if launch else 0
         self.post_comment_id = post_comment.id if post_comment else 0
         self.is_read = is_read
-        push(message_type.type, user, launch, post_comment.content)
+        comment = post_comment.content if post_comment else None
+        push(message_type.type, user, launch, comment)
 
     def get_detail(self):
         message_type = MessageType.query.get(self.message_type_id)
