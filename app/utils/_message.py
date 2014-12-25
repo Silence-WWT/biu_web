@@ -96,9 +96,9 @@ class AndroidPush(Push):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = 'AqzvPre6xjFCu3931682tHScMYlALNYDr6OceLaXNGeu'
+        self._push_params['device_tokens'] = device_token
         self._push_params['payload']['body']['title'] = 'Biu'
-        self._push_params['payload']['body']['text'] = u'富贵全靠男神'
+        self._push_params['payload']['body']['text'] = message
 
 
 class IosPush(Push):
@@ -124,5 +124,5 @@ class IosPush(Push):
         self._push_params['appkey'] = self._app_key
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
-        self._push_params['device_tokens'] = '2ec6db4cdedb923d9ae19cc2a489157f292d900d8306a4e3c0fc8a69d56935a3'
+        self._push_params['device_tokens'] = device_token
         self._push_params['payload']['aps'] = {'alert': message}
