@@ -1,12 +1,8 @@
-/**
- * Created by Paul on 2014/12/3.
- */
-
 /*------------------------- 获取信息 -------------------------*/
 function get_info() {
 	pic_id = localStorage.getItem('post');
 	$.ajax({
-		url : 'http://127.0.0.1:5000/api/v1.0/post/share?post=' + pic_id,
+		url : 'http://123.56.45.108:82/api/v1.0/post/share?post=' + pic_id,
 		type: 'GET',
 		dataType:'json',
 		timeout: 5000,
@@ -84,7 +80,7 @@ function encodeDate(time){
 function showLoading() {
 	var tmp = document.getElementById('loading_bg');
 	if (tmp == null) {
-		var html = "<div id='loading_bg'><img class='loading_icon' src='/static/img/icon_loading.png'></img></div>";
+		var html = "<div id='loading_bg'><img class='loading_icon' src='http://biu2014.qiniudn.com/static/img/icon_loading.png'></img></div>";
 		$(document.body).append(html);
 	}
 }
