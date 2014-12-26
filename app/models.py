@@ -293,6 +293,16 @@ class Post(db.Model):
         }
         return post_dict
 
+    def get_share_dict(self):
+        return {
+            'user': self.get_user().get_brief_info_dict(),
+            'post_id': self.id,
+            'content': self.content,
+            'created': self.created,
+            'image': current_app.config['STATIC_URL'] + self.image,
+            'comments_count': PostComment.query.filter_by(post_id=self.id, is_deleted=False).count(),
+        }
+
     def get_comments_dict(self, page, per_page, comment_id=None):
         if comment_id:
             comment = PostComment.query.filter_by(post_id=self.id, id=comment_id).limit(1).first()

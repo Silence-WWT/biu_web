@@ -297,6 +297,20 @@ def delete():
     return jsonify(data)
 
 
+@api.route('/post/share')
+def post_share():
+    data = {}
+    post_id = request.values.get('post', '', type=str)
+    post_ = Post.query.filter_by(id=post_id, is_deleted=False).limit(1).first()
+    if post_:
+        data['post'] = post_.get_share_dict()
+        data['post']['comments'] = post_.get_comments_dict(1, 10)
+        data['status'] = SUCCESS
+    else:
+        data['status'] = POST_NOT_EXIST
+    return jsonify(data)
+
+
 @api.route('/up_reword')
 def up_reword():
     data = {}
