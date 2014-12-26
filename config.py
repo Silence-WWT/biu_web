@@ -10,8 +10,8 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
     DEBUG = True
-    IMAGE_DIR = '/home/silence/Python/Biu/images/'
-    STATIC_URL = 'http://127.0.0.1:5000/images/'
+    IMAGE_DIR = '/home/silence/Python/biu_web/static/images/'
+    STATIC_URL = 'http://127.0.0.1:5000/static/images/'
     GOLDS_POST = 5
     GOLDS_COMMENT = 1
     GOLDS_LIKE = 2
@@ -31,7 +31,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     CDN_DEBUG = False
-    IMAGE_DIR = os.path.join(basedir, 'images')
+    IMAGE_DIR = os.path.join(basedir, 'app/static/images')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'mysql+pymysql://dev:devpassword@localhost/biu?charset=utf8'
 
