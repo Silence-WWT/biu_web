@@ -2,7 +2,7 @@
 function get_info() {
 	pic_id = localStorage.getItem('post');
 	$.ajax({
-		url : 'http://123.56.45.108:82/api/v1.0/post/share?post=' + pic_id,
+		url : '/api/v1.0/post/share?post=' + pic_id,
 		type: 'GET',
 		dataType:'json',
 		timeout: 5000,
