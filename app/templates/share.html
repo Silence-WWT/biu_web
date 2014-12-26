@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>Biu~</title>
+    <link rel="stylesheet"  href="{{ url_for('static', filename='css/share.css') }}" >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/amazeui.min.css') }}">
+    <script language="javascript" type="text/javascript" src="{{ url_for('static', filename='js/share.js') }}"></script>
+    <script language="javascript" type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script language="javascript" type="text/javascript" src="{{ url_for('static', filename='js/WeixinApi.js') }}"></script>
+</head>
+<body>
+    <div>
+        <div id="content_div">
+            <img id="pic" src="{{ url_for('static', filename='img/iconfont-morentu.png') }}" />
+        </div>
+    </div>
+    <div class="person">
+        <div class="lala0"><img class="photo" id="main_user_headphoto" src="{{ url_for('static', filename='img/iconfont-lluseraavatar.png') }}"></div>
+        <div class="lala">
+            <p id="main_user_name" class="name"></p>
+            <p id="main_user_time" class="time" style="width: 300px;"></p>
+        </div>
+        <div class="count">
+            <p style="font-size: 20px;margin-top: 9px;font-family:"Microsoft Yahei", "微软雅黑", "Tahoma", "Arial", "Helvetica", "STHeiti"">biu</p>
+            <p id="biu_count" style="font-size: 15px"></p>
+        </div>
+    </div>
+    <div style="width: 100%;height: 1px;background-color:gainsboro;"></div>
+    <div class="describe"><p id="main_user_content" class="des"></p></div>
+    <div class="download">
+        <div class="lala0"><img class="logo" src="{{ url_for('static', filename='img/logo.jpg') }}"></div>
+        <div class="intro">
+            <p class="name" style="font-size: 22px;">biu~</p>
+            <p class="introduce">图片弹幕分享社区</p>
+        </div>
+        <div class="button0">
+            <button class="am-btn am-btn-primary" style="margin-top:9px;position:absolute; right:10px; background-color:red;border:0;opacity:0.8;">
+                我也要biu~
+                <i class="am-icon-cloud-download"></i>
+            </button>
+        </div>
+    </div>
+</body>
+<script text="javascript">
+	$(document).ready(function(){
+		var MainW = $(document.body).width();
+		$('#content_div').css('height',MainW);
+		$('#content_div').css('width',MainW);
+		$('#pic').css('margin-left',MainW/2-50);
+		$('#pic').css('margin-top',MainW/2-50);
+		showLoading();
+		$('#loading_bg img').css('top',MainW/2);
+
+		function GetRequest() {
+			var url = location.search;
+			var theRequest = new Object();
+			if (url.indexOf("?") != -1) {
+				var str = url.substr(1);
+				strs = str.split("&");
+				for(var i = 0; i < strs.length; i ++) {
+					theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+				}
+			}
+			return theRequest;
+		}
+		var Request = new Object();
+		Request = GetRequest();
+		var tmp_id = Request['post'];
+		localStorage.setItem('post',tmp_id);
+		get_info();
+	});
+</script>
+</html>
