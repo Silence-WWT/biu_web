@@ -168,8 +168,8 @@ class User(UserMixin, db.Model):
                 paginate(page, per_page, False).items
 
     def get_message_list(self, page):
-        message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created)\
-            #  .paginate(page, 20, False).items
+        message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created).\
+            paginate(page, 20, False).items
         messages = [message.get_detail() for message in message_list]
         return messages
 
