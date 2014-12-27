@@ -64,9 +64,10 @@ def post_comment():
         author = comment.get_post().get_user()
         author.add_golds('comment')
         #  TODO: 弹幕推送
-        message = Message(comment_message_type, author, user, comment)
-        db.session.add(message)
-        db.session.commit()
+        if author.id != user.id:
+            message = Message(comment_message_type, author, user, comment)
+            db.session.add(message)
+            db.session.commit()
         data['post_comment'] = comment.get_comment_info()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
