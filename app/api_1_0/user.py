@@ -103,7 +103,7 @@ def third_party_login():
         data['status'] = TOKEN_INCORRECT
         data['message'] = TOKEN_INCORRECT_MSG
     elif society and society_user_id:
-        third_party_user = ThirdPartyUser.query.filter_by(society_id=society_id, society_user_id=society_user_id).\
+        third_party_user = ThirdPartyUser.query.filter_by(society_id=society_id, society_user_id=society_user_id). \
             limit(1).first()
         if not third_party_user:
             user_id = User.get_random_id()
@@ -239,7 +239,7 @@ def follow():
         fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id).limit(1).first()
         if not fan and not cancel:
             follow_message_type = MessageType.query.filter_by(type='follow').first()
-            #  TODO: follow_message_type Factory
+            # TODO: follow_message_type Factory
             fan = Fan(user_id=user_id, idol_id=idol_id)
             db.session.add(fan)
             message = Message(follow_message_type, idol, user)
@@ -329,8 +329,14 @@ def active_users():
         'message': SUCCESS_MSG,
         'users': []
     }
-    posts = db.session.query(Post.user_id, func.count('*').label('posts_count')).group_by(Post.user_id).\
+    posts = db.session.query(Post.user_id, func.count('*').label('posts_count')).group_by(Post.user_id). \
         order_by(desc('posts_count')).limit(12)
-    for post in posts:
-        data['users'].append(Post.query.get(post[0]).get_user().get_brief_info_dict())
+    jiecao_sister = User.query.get('69331659')  # 节操姐
+    user_list = [Post.query.get(post[0]).get_user() for post in posts]
+    if jiecao_sister and jiecao_sister not in user_list:
+        user_list.insert(0, jiecao_sister)
+        user_list = user_list[:12]
+    for user in user_list:
+        data['users'].append(user.get_brief_info_dict())
+    data['users'] = data['users'][:12]
     return jsonify(data)
