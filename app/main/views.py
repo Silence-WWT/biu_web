@@ -7,3 +7,8 @@ from .import main
 @main.route('/share')
 def share():
     return render_template('share.html')
+
+
+@main.route('/')
+def index():
+    return render_template('index.html')
