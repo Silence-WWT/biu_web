@@ -6,7 +6,7 @@ from flask.ext.login import UserMixin
 from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
 
 from app import db
-from utils import time_now, push
+from utils import time_now, push, page_isvalid
 
 seed()
 
@@ -121,6 +121,7 @@ class User(UserMixin, db.Model):
         }
 
     def get_profile_dict(self, page, user_id, identity):
+        page = page_isvalid(page)
         profile_dict = {
             'user': self.get_self_info_dict(False),
             'followings_count': Fan.query.filter_by(user_id=self.id, is_deleted=False).count(),
@@ -133,6 +134,7 @@ class User(UserMixin, db.Model):
         return profile_dict
 
     def get_self_posts(self, page, user_id, identity):
+        page = page_isvalid(page)
         posts = Post.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Post.created).\
             paginate(page, current_app.config['HOME_PAGE_POSTS_PER_PAGE'], False).items
         return [post.get_post_info_dict(user_id, identity) for post in posts]
@@ -160,6 +162,7 @@ class User(UserMixin, db.Model):
             return False
 
     def get_fans(self, following, page, per_page):
+        page = page_isvalid(page)
         if following:
             return Fan.query.filter_by(user_id=self.id, is_deleted=False).order_by(-Fan.created). \
                 paginate(page, per_page, False).items
@@ -168,6 +171,7 @@ class User(UserMixin, db.Model):
                 paginate(page, per_page, False).items
 
     def get_message_list(self, page):
+        page = page_isvalid(page)
         message_list = Message.query.filter_by(user_id=self.id).order_by(-Message.created).\
             paginate(page, 20, False).items
         messages = [message.get_detail() for message in message_list]
@@ -304,6 +308,7 @@ class Post(db.Model):
         }
 
     def get_comments_dict(self, page, per_page, comment_id=None):
+        page = page_isvalid(page)
         if comment_id:
             comment = PostComment.query.filter_by(post_id=self.id, id=comment_id).limit(1).first()
         else:
