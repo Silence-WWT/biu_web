@@ -578,6 +578,7 @@ class Message(db.Model):
     def get_detail(self):
         message_type = MessageType.query.get(self.message_type_id)
         detail = {
+            'message_id': self.id,
             'message_type': message_type.type,
             'created': self.created,
             'is_read': self.is_read
