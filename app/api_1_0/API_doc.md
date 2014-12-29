@@ -209,12 +209,13 @@ message_list
         user_id
         page
     json:
-        {"status": 0, "message": "success", "messages":[{"message_id": "", "message_type": "", "created": "",
-         "format":"", "", "post_id": "", "post_comment_id": "", "content": "", "is_read": "", 
+        {"status": 0, "message": "success", "unread_count": "", "messages":[{"message_id": "", "message_type": "",
+         "created": "", "format":"", "", "post_id": "", "post_comment_id": "", "content": "", "is_read": "", 
          "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
         
         status: int, 0 for success, 2000 for parameters error
         message: str, message of status code
+        unread_count: int
         messages: a list of message
             message_id: int
             message_type: str. "comment" OR "follow" OR "delete post"

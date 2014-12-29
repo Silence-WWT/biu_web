@@ -177,6 +177,9 @@ class User(UserMixin, db.Model):
         messages = [message.get_detail() for message in message_list]
         return messages
 
+    def get_message_unread_count(self):
+        return Message.query.filter_by(user_id=self.id, is_read=False).count()
+
     @staticmethod
     def generate_fake(count=1000):
         from faker import Factory
