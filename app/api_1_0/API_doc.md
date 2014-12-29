@@ -209,12 +209,14 @@ message_list
         user_id
         page
     json:
-        {"status": 0, "message": "success", "messages":[{"message_type": "", "created": "", "format":"", "", "post_id": "", 
-            "post_comment_id": "", "content": "", "is_read": "", "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
+        {"status": 0, "message": "success", "messages":[{"message_id": "", "message_type": "", "created": "",
+         "format":"", "", "post_id": "", "post_comment_id": "", "content": "", "is_read": "", 
+         "user": {"user_id": "", "nickname": "", "avatar": ""}}]}
         
         status: int, 0 for success, 2000 for parameters error
         message: str, message of status code
         messages: a list of message
+            message_id: int
             message_type: str. "comment" OR "follow" OR "delete post"
             created: int.
             format: unicode. 不含用户昵称的字符串 "biu了你的图片一下" OR "关注了你" OR "你的图片包含政治不正确的信息哦，我已经报警了!"
