@@ -107,13 +107,16 @@ class IosPush(Push):
 
     def _generate_push_message(self, message_type, launch, comment):
         self._push_params['payload']['message_type'] = message_type
+        self._push_params['payload']['aps'] = {}
         if message_type == 'follow' or message_type == 'comment':
             self._push_params['payload']['user_id'] = launch.id
             self._push_params['payload']['nickname'] = launch.nickname
             self._push_params['payload']['avatar'] = launch.get_avatar()
             if message_type == 'follow':
+                self._push_params['payload']['aps']['category'] = 'focus'
                 return u'%s 关注了你' % launch.nickname
             else:
+                self._push_params['payload']['aps']['category'] = 'reply'
                 return u'%s biu了你的图片: %s' % (launch.nickname, comment)
         elif message_type == 'delete_post':
             return u'你的图片包含政治不正确的信息哦'
@@ -125,4 +128,4 @@ class IosPush(Push):
         self._push_params['timestamp'] = self._timestamp
         self._push_params['validation_token'] = self._get_validation_token()
         self._push_params['device_tokens'] = device_token
-        self._push_params['payload']['aps'] = {'alert': message}
+        self._push_params['payload']['aps']['alert'] = message
