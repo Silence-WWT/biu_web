@@ -230,8 +230,8 @@ def share():
     society = Society.query.get(society_id)
     post_ = Post.query.get(post_id)
     if post_ and society and (user_id or identity):
-        post_share = PostShare(post_id, society_id, user_id, identity)
-        db.session.add(post_share)
+        post_share_ = PostShare(post_id, society_id, user_id, identity)
+        db.session.add(post_share_)
         db.session.commit()
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
@@ -265,13 +265,13 @@ def report():
             target_report = target_class(target_id, user_id)
             db.session.add(target_report)
             db.session.commit()
-            if target.report_delete() and isinstance(target, Post):
-                delete_message_type = MessageType.query.filter_by(type='delete_post').first()
+            # if target.report_delete() and isinstance(target, Post):
+                # delete_message_type = MessageType.query.filter_by(type='delete_post').first()
                 #  TODO: delete_message_type Factory
-                author = target.get_user()
-                message = Message(delete_message_type, author, None, is_read=True)
-                db.session.aad(message)
-                db.session.commit()
+                # author = target.get_user()
+                # message = Message(delete_message_type, author, None, is_read=True)
+                # db.session.aad(message)
+                # db.session.commit()
                 # TODO: 举报删除推送
         data['status'] = SUCCESS
         data['message'] = SUCCESS_MSG
