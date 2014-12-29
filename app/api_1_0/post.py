@@ -5,7 +5,7 @@ from ..models import User, Fan, Post, PostLike, PostReport, PostShare, PostComme
     Channel, Society, Message, MessageType
 from . import api
 from app import db
-from app.utils import upload_image
+from app.utils import upload_image, page_isvalid
 from api_constants import *
 
 
@@ -95,6 +95,7 @@ def get_posts():
     page = request.values.get('page', 1, type=int)
     user_id = request.values.get('user_id', '', type=str)
     identity = request.values.get('identity', '', type=str)
+    page = page_isvalid(page)
     if channel_id > 0:
         posts = Post.query.filter_by(channel_id=channel_id, is_deleted=False).\
             order_by(-Post.created).\
