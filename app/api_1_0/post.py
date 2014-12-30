@@ -64,6 +64,7 @@ def post_comment():
         author = comment.get_post().get_user()
         author.add_golds('comment')
         #  TODO: 弹幕推送
+        print author.id, user.id
         if author.id != user.id:
             print author.id, user.id, 'comment push'
             message = Message(comment_message_type, author, user, comment)
