@@ -65,6 +65,7 @@ def post_comment():
         author.add_golds('comment')
         #  TODO: 弹幕推送
         if author.id != user.id:
+            print author.id, user.id, 'comment push'
             message = Message(comment_message_type, author, user, comment)
             db.session.add(message)
             db.session.commit()
