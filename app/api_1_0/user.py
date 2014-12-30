@@ -336,11 +336,14 @@ def active_users():
     posts = db.session.query(Post.user_id, func.count('*').label('posts_count')).group_by(Post.user_id). \
         order_by(desc('posts_count')).limit(12)
     jiecao_sister = User.query.get('69331659')  # 节操姐
-    print [post for post in posts]
-    user_list = [Post.query.get(post[0]).get_user() for post in posts]
+    user_list = [User.query.get(post[0]) for post in posts]
     if jiecao_sister and jiecao_sister not in user_list:
         user_list.insert(0, jiecao_sister)
         user_list = user_list[:12]
+    elif jiecao_sister and jiecao_sister in user_list:
+        index = user_list.index(jiecao_sister)
+        if index != 0:
+            user_list[0], user_list[index] = user_list[index], user_list[0]
     for user in user_list:
         data['users'].append(user.get_brief_info_dict())
     data['users'] = data['users'][:12]
