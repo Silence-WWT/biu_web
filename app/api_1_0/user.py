@@ -50,12 +50,14 @@ def register():
         data['status'] = TOKEN_INCORRECT
         data['message'] = TOKEN_INCORRECT_MSG
     elif email and password and identity:
+        nickname = email.rsplit('@', 1)[0]
         user = User(
             id=User.get_random_id(),
             password=password,
             email=email,
             identity=identity,
-            device=device
+            device=device,
+            nickname=nickname
         )
         db.session.add(user)
         db.session.commit()
