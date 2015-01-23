@@ -97,6 +97,7 @@ def get_posts():
     page = request.values.get('page', 1, type=int)
     user_id = request.values.get('user_id', '', type=str)
     identity = request.values.get('identity', '', type=str)
+    json_content = request.values.get('json_content', '', type=str)
     page = page_isvalid(page)
     if channel_id > 0:
         posts = Post.query.filter_by(channel_id=channel_id, is_deleted=False).\
@@ -123,11 +124,14 @@ def get_posts():
             data['status'] = USER_NOT_EXIST
             data['message'] = USER_NOT_EXIST_MSG
             return jsonify(data)
-    for post_ in posts:
-        post_dict = post_.get_post_info_dict(user_id, identity)
-        post_dict['comments'] = post_.get_comments_dict(current_app.config['FIRST_PAGE'],
-                                                        current_app.config['COMMENTS_PER_PAGE'])
-        data['posts'].append(post_dict)
+    if json_content == 'post_id':
+        data['posts'] = [post_.id for post_ in posts]
+    else:
+        for post_ in posts:
+            post_dict = post_.get_post_info_dict(user_id, identity)
+            post_dict['comments'] = post_.get_comments_dict(current_app.config['FIRST_PAGE'],
+                                                            current_app.config['COMMENTS_PER_PAGE'])
+            data['posts'].append(post_dict)
     data['status'] = SUCCESS
     data['message'] = SUCCESS_MSG
     return jsonify(data)
