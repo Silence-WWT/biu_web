@@ -467,7 +467,7 @@ get_channels
 get_posts
 ---
     URL:
-        /api/v1.0/get_posts?user_id=&channel_id=&page=&identity=
+        /api/v1.0/get_posts?user_id=&channel_id=&page=&identity=&json_content=
     method:
         get
     parameters:
@@ -477,6 +477,7 @@ get_posts
                     为了保证将来的扩展性，我觉得第一版 channel的id与名称还是全部由服务器返回，频道的图标最好也由服务器返回（当然这个我还没实现）
                     热门，最新发布，关注用户 不能算真正意义上的"频道"， 而且其他的频道id都是与数据库中的id刚好对应的
         page: default 1
+        json_content: 可选的. 如果为post_id,则返回的结果只包含post_id. int
     json:
         {"status": 0, "message": "success",
          "posts": [{"channel_id": "", "content": "", "created": "", "image": "", "comments_count": "", "post_id": "",
@@ -484,6 +485,9 @@ get_posts
             "user": {"avatar": "", "user_id": "", "nickname": ""},
             "comments": [{"post_id": "", "created": "", "content": "", "x": "", "y": "",
                 "user": {"user_id": "", "nickname": "", "avatar": ""}}]]}
+        
+        若json_content为 post_id,返回的完整json形式如下:
+        {"status": 0, "message": "success", "posts": ["", ""]}
         
         status: int, 0 for success, 1002 for user not exist
         message: str, message for status code
