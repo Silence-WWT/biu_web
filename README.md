@@ -1,7 +1,7 @@
 Biu~
 ====
 
-使用flask框架的web application
+使用Flask框架的web application
 
 Setup
 ----
