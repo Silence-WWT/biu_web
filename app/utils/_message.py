@@ -6,21 +6,21 @@ import requests
 from . import time_now
 
 android_push = None
-ios_push = None
+iOS_push = None
 
 
 def push(message_type, user, launch, comment=''):
-    global android_push, ios_push
+    global android_push, iOS_push
     if user.device == 0:
         if android_push is None:
             device_push = android_push = AndroidPush()
         else:
             device_push = android_push
     else:
-        if ios_push is None:
-            device_push = ios_push = IosPush()
+        if iOS_push is None:
+            device_push = iOS_push = IOSPush()
         else:
-            device_push = ios_push
+            device_push = iOS_push
     return device_push.push_unicast(message_type, user, launch, comment)
 
 
@@ -101,7 +101,7 @@ class AndroidPush(Push):
         self._push_params['payload']['body']['text'] = message
 
 
-class IosPush(Push):
+class IOSPush(Push):
     _app_key = '5481e1b2fd98c5b418000a99'
     _app_master_secret = 'eurxcpfruvk7rmhir7cpelbo0lmsmsgj'
 

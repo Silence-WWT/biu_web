@@ -7,7 +7,7 @@ from xml.dom import minidom
 from flask import current_app
 from faker import Factory
 
-from app.utils._biu_hashlib import MD5
+from app.utils import MD5
 
 seed()
 __local_redis = StrictRedis(host='localhost', port=6379, db=0)

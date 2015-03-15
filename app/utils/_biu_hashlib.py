@@ -90,7 +90,6 @@ class MD5():
             count += 1
             self.__constants_count += 1
 
-    # 主程序
     def hex_digest(self):
         for i in range(0, len(self.__message_list) / 64):
             seed_a, seed_b, seed_c, seed_d = self.__hash_pieces
