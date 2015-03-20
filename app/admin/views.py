@@ -7,7 +7,7 @@ from sqlalchemy.exc import ArgumentError
 from app import app
 from . import admin
 from ..models import User
-from ..utils import page_isvalid, paginate, date_from_timestamp
+from ..utils import page_isvalid, date_from_timestamp
 
 
 class BiuBaseView(BaseView):
