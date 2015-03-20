@@ -23,7 +23,8 @@ class BiuBaseView(BaseView):
         sort = request.values.get('sort', '', type=str)
         desc = request.values.get('desc', 0, type=int)
         items, pagination = self.get_list(page, sort, desc)
-        return self.render(self.template, pagination=pagination, items=items, get_date=date_from_timestamp)
+        return self.render(
+            self.template, pagination=pagination, items=items, sort=sort, desc=str(desc), get_date=date_from_timestamp)
 
     def get_list(self, page, sort='', desc=0, per_page=20):
         page = page_isvalid(page)
@@ -31,7 +32,7 @@ class BiuBaseView(BaseView):
             sort_key = None
         else:
             try:
-                sort_key = self.model.__dict__[sort] if not desc else -self.model.__table__[sort]
+                sort_key = self.model.__dict__[sort] if not desc else -self.model.__dict__[sort]
             except KeyError:
                 sort_key = None
         try:

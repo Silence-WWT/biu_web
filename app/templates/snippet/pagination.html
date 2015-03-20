@@ -1,4 +1,4 @@
-{% macro pagination_widget(pagination, endpoint, fragment='') %}
+{% macro pagination_widget(pagination, endpoint, fragment='', kwargs) %}
     <div class="pagination pagination-large" id="pages">
     <ul>
         <li{% if not pagination.has_prev %} class="disabled"{% endif %}>

@@ -1,4 +1,6 @@
 {% extends 'admin/base.html' %}
+{% from 'snippet/pagination.html' import pagination_widget %}
+
 
 {% block head_css %}
     {{ super() }}
@@ -42,7 +44,5 @@
         </table>
     </div>
 </div>
-{% from 'snippet/pagination.html' import pagination_widget %}
-{{ pagination_widget(pagination, 'admin_user.index', '#adminuser') }}
-
+{{ pagination_widget(pagination, 'admin_user.index', '#adminuser', {'sort': sort, 'desc': desc}) }}
 {% endblock %}

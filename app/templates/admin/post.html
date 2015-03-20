@@ -36,6 +36,6 @@
     </div>
 </div>
 {% from 'snippet/pagination.html' import pagination_widget %}
-{{ pagination_widget(pagination, 'admin_post.index', '#adminuser') }}
+{{ pagination_widget(pagination, 'admin_post.index', '#adminuser', {'sort': sort, 'desc': desc}) }}
 
 {% endblock %}
