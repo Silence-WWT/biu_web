@@ -1,0 +1,41 @@
+{% extends 'admin/base.html' %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+
+{% block body %}
+<div id="postadmin">
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <td><span>image</span></td>
+                <td><span>content</span></td>
+                <td><span>channel</span></td>
+                <td><span>likes_count</span></td>
+                <td><span>is deleted</span></td>
+                <td><span>created</span></td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for post in items %}
+            <tr>
+                <td><img style="height: 100px;width: 100px;" src="{{ url_for('static', filename = 'images/' + post.image) }}"></td>
+                <td style="width: 500px"><span>{{ post.content }}</span></td>
+                <td><span>{{ post.channel_id }}</span></td>
+                <td><span>{{ post.likes_count }}</span></td>
+                <td><span>{{ post.is_deleted }}</span></td>
+                <td><span>{{ get_date(post.created) }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% from 'snippet/pagination.html' import pagination_widget %}
+{{ pagination_widget(pagination, 'admin_post.index', '#adminuser') }}
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'admin/base.html' %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+
+{% block body %}
+<div id="useradmin">
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <td><span></span></td>
+                <td><span>nickname</span></td>
+                <td><span>email</span></td>
+                <td><span>avatar</span></td>
+                <td><span>signature</span></td>
+                <td><span>sex</span></td>
+                <td><span>created</span></td>
+                <td><span>post count</span></td>
+                <td><span>comment count</span></td>
+                <td><span>device</span></td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in items %}
+            <tr>
+                <td><span>{{ user.nickname }}</span></td>
+                <td><span>{{ user.email }}</span></td>
+                <td><img src="{{ url_for('static', filename = 'images/' + user.avatar) }}"></td>
+                <td><span>{{ user.signature }}</span></td>
+                <td><span>{{ 'male' if user.sex else 'female' }}</span></td>
+                <td><span>{{ get_date(user.created) }}</span></td>
+                <td><span>{{ user.post_count() }}</span></td>
+                <td><span>{{ user.post_comment_count() }}</span></td>
+                <td><span>{{ 'iOS' if user.device else 'Android' }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% from 'snippet/pagination.html' import pagination_widget %}
+{{ pagination_widget(pagination, 'admin_user.index', '#adminuser') }}
+
+{% endblock %}

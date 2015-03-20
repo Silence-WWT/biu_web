@@ -142,6 +142,14 @@ class User(UserMixin, db.Model):
     def get_avatar(self):
         return current_app.config['STATIC_URL'] + self.avatar if self.avatar else ''
 
+    @property
+    def post_count(self):
+        return Post.query.filter_by(user_id=self.id, is_deleted=False).count
+
+    @property
+    def post_comment_count(self):
+        return PostComment.query.filter_by(user_id=self.id, is_deleted=False).count
+
     def add_golds(self, parameter, method='add', reword=0):
         if parameter == 'post':
             golds = current_app.config['GOLDS_POST']
