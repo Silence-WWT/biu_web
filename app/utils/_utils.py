@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import datetime
 
 from flask import current_app
 
@@ -14,3 +15,7 @@ def sex_isvalid(sex):
 
 def page_isvalid(page):
     return page if page > 0 else 1
+
+
+def date_from_timestamp(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp).strftime('%F %T')
