@@ -3,7 +3,11 @@
     width: 40px;
 }
 
-img {
+#postadmin img {
     height: 100px;
     width: 100px;
+}
+
+.postcontent {
+    width: 400px;
 }

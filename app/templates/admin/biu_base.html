@@ -1,0 +1,12 @@
+{% extends 'admin/base.html' %}
+{% from 'snippet/pagination.html' import pagination_widget %}
+
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+    {{ pagination_widget(pagination, 'admin_user.index', '#adminuser', {'sort': sort, 'desc': desc}) }}
+{% endblock%}

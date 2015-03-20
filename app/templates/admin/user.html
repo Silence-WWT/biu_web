@@ -1,12 +1,4 @@
-{% extends 'admin/base.html' %}
-{% from 'snippet/pagination.html' import pagination_widget %}
-
-
-{% block head_css %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
-{% endblock %}
-
+{% extends 'admin/biu_base.html' %}
 
 {% block body %}
 <div id="useradmin">
@@ -14,7 +6,6 @@
         <table class="table">
             <thead>
             <tr>
-                <td><span></span></td>
                 <td><span>nickname</span></td>
                 <td><span>email</span></td>
                 <td><span>avatar</span></td>
@@ -44,5 +35,5 @@
         </table>
     </div>
 </div>
-{{ pagination_widget(pagination, 'admin_user.index', '#adminuser', {'sort': sort, 'desc': desc}) }}
+{{ super() }}
 {% endblock %}
