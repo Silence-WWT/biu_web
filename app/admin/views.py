@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-from flask import request, render_template
+from flask import request, render_template, current_app, redirect, flash
 from flask.ext.admin import BaseView, expose
-from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.login import login_user
+from flask.ext.principal import identity_changed, Identity
 from sqlalchemy.exc import ArgumentError
 
-from app import app
 from . import admin
-from ..models import User
+from ..models import Privilege
+from ..permission import admin_permission
 from ..utils import page_isvalid, date_from_timestamp
+from forms import LoginForm
 
 
 class BiuBaseView(BaseView):
@@ -18,6 +20,7 @@ class BiuBaseView(BaseView):
         super(BiuBaseView, self).__init__(**kwargs)
 
     @expose('/')
+    @admin_permission.require(http_exception=404)
     def index(self):
         page = request.values.get('page', 1, type=int)
         sort = request.values.get('sort', '', type=str)
@@ -43,9 +46,14 @@ class BiuBaseView(BaseView):
         return items, pagination
 
 
-@admin.route('/user')
-def admin_index():
-    page = request.values.get('page', 0, type=int)
-    pagination = User.query.order_by().paginate(page, 20, False)
-    # user_list = pagination.items
-    return render_template('admin/user.html', pagination=pagination)
+@admin.route('/login', methods=['GET', 'POST'])
+def admin_login():
+    login_form = LoginForm()
+    if login_form.validate_on_submit():
+        administration = Privilege.query.filter_by(username=login_form.username.data).first()
+        if administration and administration.verify_password(login_form.password.data):
+            login_user(administration)
+            identity_changed.send(current_app._get_current_object(), identity=Identity(administration.get_id()))
+            return redirect('/')
+        flash('wrong username or password')
+    return render_template('admin/login.html', login_form=login_form)

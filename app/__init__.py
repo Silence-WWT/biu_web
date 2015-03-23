@@ -2,12 +2,17 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.admin import Admin
+from flask.ext.login import LoginManager
+from flask.ext.principal import Principal
 from config import config
+from permission import config_identity
 
 
 app = None
 db = SQLAlchemy()
 admin = Admin()
+login_manager = LoginManager()
+principal = Principal()
 
 
 def create_app(config_name):
@@ -16,6 +21,10 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     admin.init_app(app)
     db.init_app(app)
+    login_manager.init_app(app)
+    principal.init_app(app)
+
+    config_identity(app)
 
     from .api_1_0 import api as api_1_0_blueprint
     app.register_blueprint(api_1_0_blueprint, url_prefix='/api/v1.0')
