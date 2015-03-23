@@ -54,6 +54,6 @@ def admin_login():
         if administration and administration.verify_password(login_form.password.data):
             login_user(administration)
             identity_changed.send(current_app._get_current_object(), identity=Identity(administration.get_id()))
-            return redirect('/')
+            return redirect('/admin')
         flash('wrong username or password')
     return render_template('admin/login.html', login_form=login_form)
