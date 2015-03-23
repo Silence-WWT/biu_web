@@ -5,7 +5,7 @@ from flask import current_app
 from flask.ext.login import UserMixin
 from flask.ext.scrypt import generate_random_salt, generate_password_hash, check_password_hash
 
-from app import db
+from app import db, login_manager
 from utils import time_now, push, page_isvalid
 
 seed()
@@ -677,6 +677,41 @@ class Society(db.Model):
         db.session.add(Society(society=u'微信'))
         db.session.add(Society(society=u'QQ空间'))
         db.session.commit()
+
+
+class Privilege(UserMixin, db.Model):
+    __tablename__ = 'privileges'
+    id = db.Column(db.SmallInteger, primary_key=True)
+    username = db.Column(db.String(12), nullable=False)
+    password_hash = db.Column('password', db.String(128), nullable=False)
+    salt = db.Column(db.String(128), nullable=False)
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.salt = generate_random_salt()
+        self.password_hash = generate_password_hash(password, self.salt)
+
+    def verify_password(self, password):
+        return check_password_hash(password, self.password_hash, self.salt)
+
+    def get_id(self):
+        return u'a' + unicode(self.id)
+
+    @staticmethod
+    def add_admin(username, password):
+        admin = Privilege(username=username, password=password)
+        db.session.add(admin)
+        db.session.commit()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id.startswith(u'a'):
+        Privilege.query.get(user_id[1:])
 
 
 def generate_helper_data():
