@@ -1,0 +1,29 @@
+{% extends 'admin/biu_base.html' %}
+
+{% block body%}
+<div class="commentadmin">
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><span>nickname</span></th>
+                <th><span>content</span></th>
+                <th><span>created</span></th>
+                <th><span>is_deleted</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for comment in items%}
+            <tr>
+                <td><span>{{ comment.get_user().nickname }}</span></td>
+                <td><span>{{ comment.content }}</span></td>
+                <td><span>{{ get_date(comment.created) }}</span></td>
+                <td><span>{{ comment.is_deleted }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ super() }}
+{% endblock %}
