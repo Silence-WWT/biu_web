@@ -117,7 +117,7 @@ def get_posts():
         user = User.query.get(user_id)
         if user:
             followings_id = [following.idol_id for following in Fan.query.filter_by(user_id=user_id, is_deleted=False)]
-            posts = Post.query.filter(Post.user_id.in_(followings_id), Post.is_deleted is not False).\
+            posts = Post.query.filter(Post.user_id.in_(followings_id), Post.is_deleted is False).\
                 order_by(Post.created).\
                 paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
         else:
