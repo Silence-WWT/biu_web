@@ -682,7 +682,7 @@ class Society(db.Model):
 class Privilege(UserMixin, db.Model):
     __tablename__ = 'privileges'
     id = db.Column(db.SmallInteger, primary_key=True)
-    username = db.Column(db.String(12), nullable=False)
+    username = db.Column(db.String(12), nullable=False, unique=True)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
 

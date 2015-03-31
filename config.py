@@ -10,6 +10,7 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
     DEBUG = True
+    CSRF_ENABLED = True
     IMAGE_DIR = '/home/silence/Python/biu_web/static/images/'
     STATIC_URL = 'http://127.0.0.1:5000/static/images/'
     GOLDS_POST = 5
@@ -38,8 +39,9 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'mysql+pymysql://test:testpassword@localhost/biu_test?charset=utf8'
+        'mysql+pymysql://test:testpassword@localhost/test?charset=utf8'
 
 
 class ProductionConfig(Config):

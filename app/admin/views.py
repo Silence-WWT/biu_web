@@ -48,7 +48,7 @@ class BiuBaseView(BaseView):
 
 @admin.route('/login', methods=['GET', 'POST'])
 def admin_login():
-    login_form = LoginForm()
+    login_form = LoginForm(csrf_enabled=current_app.config['CSRF_ENABLED'])
     if login_form.validate_on_submit():
         administration = Privilege.query.filter_by(username=login_form.username.data).first()
         if administration and administration.verify_password(login_form.password.data):

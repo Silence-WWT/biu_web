@@ -65,4 +65,5 @@ images.txt
 tucao/
 
 *.sql
+*.db
 *.tar.gz

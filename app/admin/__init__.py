@@ -2,7 +2,7 @@
 from flask import Blueprint
 from flask.ext.admin.contrib.sqla import ModelView
 
-from .. import admin as admin_app
+from .. import admin_app
 from .. import db
 from ..models import User, Post, PostComment, Channel
 
