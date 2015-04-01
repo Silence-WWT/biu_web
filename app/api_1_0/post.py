@@ -113,7 +113,7 @@ def get_posts():
             order_by(-Post.likes_count).\
             paginate(page, current_app.config['POSTS_PER_PAGE'], False).items
         # TODO: hot posts
-    else:
+    elif channel_id == current_app.config['FOLLOWING_CHANNEL_ID']:
         user = User.query.get(user_id)
         if user:
             followings_id = [following.idol_id for following in Fan.query.filter_by(user_id=user_id, is_deleted=False)]
@@ -124,6 +124,10 @@ def get_posts():
             data['status'] = USER_NOT_EXIST
             data['message'] = USER_NOT_EXIST_MSG
             return jsonify(data)
+    else:
+        data['status'] = PARAMETER_ERROR
+        data['message'] = PARAMETER_ERROR_MSG
+        return jsonify(data)
     if json_content == 'post_id':
         data['posts'] = [post_.id for post_ in posts]
     else:
