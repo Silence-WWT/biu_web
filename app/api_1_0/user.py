@@ -12,11 +12,18 @@ from api_constants import *
 @api.route('/register_token')
 def register_token():
     identity = request.values.get('identity', '', type=str)
-    data = {
-        'token': third_party_token(identity),
-        'status': SUCCESS,
-        'message': SUCCESS_MSG
-    }
+    if identity:
+        data = {
+            'token': third_party_token(identity),
+            'status': SUCCESS,
+            'message': SUCCESS_MSG
+        }
+    else:
+        data = {
+            'token': '',
+            'status': PARAMETER_ERROR,
+            'message': PARAMETER_ERROR_MSG
+        }
     return jsonify(data)
 
 
