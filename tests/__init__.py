@@ -26,3 +26,23 @@ class BasicBiuTestCase(TestCase):
 
     def assert_not_found(self, response):
         return self.assert_status_code(response, 404)
+
+    def assert_content_type(self, response, content_type):
+        self.assertEquals(content_type, response.headers['Content-Type'])
+        return response
+
+    def assert_json(self, response):
+        self.assert_content_type(response, 'application/json')
+        return response
+
+    def assert_ok_json(self, response):
+        self.assert_ok(self.assert_json(response))
+        return response
+
+    def assert_html(self, response):
+        self.assert_content_type(response, 'text/html; charset=utf-8')
+        return response
+
+    def assert_ok_html(self, response):
+        self.assert_ok(self.assert_html(response))
+        return response

@@ -2,7 +2,7 @@
 from tests import BasicBiuTestCase
 
 
-class BiuTestCase(BasicBiuTestCase):
+class BiuAdminTestCase(BasicBiuTestCase):
     def test_biu_admin_login(self):
         response = self.test_app.post('/biu_admin/login', data={'username': 'silence', 'password': '123456'},
                                       follow_redirects=True)
@@ -13,10 +13,6 @@ class BiuTestCase(BasicBiuTestCase):
 
     def test_admin_index(self):
         response = self.test_app.get('/admin', follow_redirects=True)
-        self.assert_ok(response)
-
-    def test_get_posts(self):
-        response = self.test_app.get('/api/v1.0/get_posts')
         self.assert_ok(response)
 
     def test_admin_user(self):
