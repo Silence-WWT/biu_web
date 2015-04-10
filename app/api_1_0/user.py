@@ -246,7 +246,7 @@ def follow():
     idol = User.query.get(idol_id)
     if user and idol:
         fan = Fan.query.filter_by(user_id=user_id, idol_id=idol_id).limit(1).first()
-        if not fan and not cancel:
+        if not fan and not cancel and user_id != idol_id:
             follow_message_type = MessageType.query.filter_by(type='follow').first()
             # TODO: follow_message_type Factory
             fan = Fan(user_id=user_id, idol_id=idol_id)
