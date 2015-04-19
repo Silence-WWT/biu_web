@@ -216,7 +216,7 @@ def personal_info_setting():
     nickname = request.values.get('nickname', u'', type=unicode)
     sex = request.values.get('sex', current_app.config['SEX_UNKNOWN'], type=int)
     user = User.query.get(user_id)
-    if user and sex_isvalid(sex):
+    if user and sex_isvalid(sex) and nickname and len(nickname) > 3:
         if image_str:
             avatar_path = upload_image(user.id, image_str)
             if avatar_path:
