@@ -57,7 +57,7 @@ def register():
         data['status'] = TOKEN_INCORRECT
         data['message'] = TOKEN_INCORRECT_MSG
     elif email and password and identity:
-        nickname = email.rsplit('@', 1)[0]
+        nickname = User.generate_nickname()
         user = User(
             id=User.get_random_id(),
             password=password,

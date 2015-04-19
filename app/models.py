@@ -69,6 +69,13 @@ class User(UserMixin, db.Model):
             if not User.query.get(random_id):
                 return random_id
 
+    @staticmethod
+    def generate_nickname():
+        while 1:
+            nickname = 'biu_%d' % randint(10000000, 99999999)
+            if not User.query.filter_by(nickname=nickname):
+                return nickname
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -743,3 +750,45 @@ def generate_fake_image_path():
 def test_message():
     from utils import push
     push('comment', User.query.get(4), User.query.get(1), u'富贵全靠大左')
+
+
+from .import celery
+import time
+import random
+
+
+@celery.task
+def hello(i):
+    print time.time()
+    time.sleep(1)
+    print('task', i, time.time())
+    if i:
+        hello.delay(0)
+    return i
+
+
+def test_celery():
+    for i in range(30):
+        hello.delay(i)
+    # long_task.apply_async()
+
+
+@celery.task(bind=True)
+def long_task(self):
+    """Background task that runs a long function with progress reports."""
+    verb = ['Starting up', 'Booting', 'Repairing', 'Loading', 'Checking']
+    adjective = ['master', 'radiant', 'silent', 'harmonic', 'fast']
+    noun = ['solar array', 'particle reshaper', 'cosmic ray', 'orbiter', 'bit']
+    message = ''
+    total = random.randint(10, 50)
+    for i in range(total):
+        if not message or random.random() < 0.25:
+            message = '{0} {1} {2}...'.format(random.choice(verb),
+                                              random.choice(adjective),
+                                              random.choice(noun))
+        self.update_state(state='PROGRESS',
+                          meta={'current': i, 'total': total,
+                                'status': message})
+        time.sleep(1)
+    return {'current': 100, 'total': 100, 'status': 'Task completed!',
+            'result': 42}
