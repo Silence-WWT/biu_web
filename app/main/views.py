@@ -16,4 +16,4 @@ def download():
 
 @main.route('/')
 def index():
-    return render_template('index_review.html')
+    return render_template('biu_index.html')
