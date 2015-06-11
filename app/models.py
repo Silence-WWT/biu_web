@@ -46,13 +46,12 @@ class UnifiedUser(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    nickname = db.Column(db.Unicode(10), default=u'', nullable=False)
+    username = db.Column(db.Unicode(15), nullable=False)
+    nickname = db.Column(db.Unicode(15), default=u'', nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
     sex = db.Column(db.SmallInteger, default=2, nullable=False)
     created = db.Column(db.Integer, default=time_now, nullable=False)
-    email = db.Column(db.String(64), nullable=False)
-    email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     identity = db.Column(db.String(64), nullable=False)
     golds = db.Column(db.Integer, default=0, nullable=False)
     avatar = db.Column(db.String(128), default='', nullable=False)
@@ -61,13 +60,6 @@ class User(UserMixin, db.Model):
     disturb = db.Column(db.Boolean, default=True, nullable=False)
     # Android 0, iOS 1
     device = db.Column(db.SmallInteger, default=0, nullable=False)
-
-    @staticmethod
-    def generate_nickname():
-        while 1:
-            nickname = 'biu_%d' % randint(10000000, 99999999)
-            if not User.query.filter_by(nickname=nickname):
-                return nickname
 
     @property
     def password(self):
@@ -100,7 +92,7 @@ class User(UserMixin, db.Model):
         }
         if is_self:
             user_dict['identity'] = self.identity
-            user_dict['email'] = self.email
+            user_dict['username'] = self.username
             user_dict['push'] = self.push
             user_dict['disturb'] = self.disturb
         return user_dict
@@ -198,9 +190,8 @@ class User(UserMixin, db.Model):
         for i in range(1, count + 1):
             random_index = randrange(0, avatar_count)
             u = User(
-                # id=User.get_random_id(),
                 nickname=fake.user_name(),
-                email=fake.email(),
+                username=fake.user_name(),
                 password='123456',
                 identity=fake.password(64),
                 golds=fake.random_int(),
