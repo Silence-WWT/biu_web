@@ -46,24 +46,23 @@ def register():
     data = {'user': {}}
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
-    email = request.values.get('email', '', type=str)
+    username = request.values.get('username', '', type=str)
     token = request.values.get('token', '', type=str)
     device = request.values.get('device', 0, type=int)
-    user = User.query.filter_by(email=email).limit(1).first()
+    user = User.query.filter_by(username=username).limit(1).first()
     if user:
-        data['status'] = EMAIL_EXIST
-        data['message'] = EMAIL_EXIST_MSG
+        data['status'] = USERNAME_EXIST
+        data['message'] = USERNAME_EXIST_MSG
     elif not redis_check('token', identity, token):
         data['status'] = TOKEN_INCORRECT
         data['message'] = TOKEN_INCORRECT_MSG
-    elif email and password and identity:
-        nickname = User.generate_nickname()
+    elif username and password and identity:
         user = User(
             password=password,
-            email=email,
+            username=username,
             identity=identity,
             device=device,
-            nickname=nickname
+            nickname=username
         )
         db.session.add(user)
         db.session.commit()
@@ -79,11 +78,11 @@ def register():
 @api.route('/login')
 def login():
     data = {'user': {}}
-    email = request.values.get('email', '', type=str)
+    username = request.values.get('username', '', type=str)
     password = request.values.get('password', '', type=str)
     identity = request.values.get('identity', '', type=str)
     device = request.values.get('device', 0, type=int)
-    user = User.query.filter_by(email=email).limit(1).first()
+    user = User.query.filter_by(username=username).limit(1).first()
     if user and user.verify_password(password):
         user.update_identity_device(identity, device)
         data['status'] = SUCCESS
@@ -118,7 +117,7 @@ def third_party_login():
                 identity=identity,
                 nickname=nickname,
                 password='',
-                email='',
+                username='',
                 sex=sex,
                 avatar='',
                 device=device
