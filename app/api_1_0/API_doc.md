@@ -38,26 +38,26 @@ confirm_mobile
 register
 ---
     URL:
-        /api/v1.0/register?password=&identity=&email=&token=&device=
+        /api/v1.0/register?password=&identity=&username=&token=&device=
     method:
         get
     parameters:
         password
         identity: uuid
-        email: 必须
+        username: 必须
         token
         device: default 0, 0 for Android, 1 for iOS
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "username": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
             "followers_count": ""}}
             
-        status: int, 0 for success, 1001 for email exists, 2000 for parameter error, 1006 for token incorrect
+        status: int, 0 for success, 1001 for username exists, 2000 for parameter error, 1006 for token incorrect
         message: str, message of status code
         user: a dict of user's info
             user_id: int
             nickname: unicode
-            email: str
+            username: str
             identity: str
             golds: 金币 int
             avatar: 头像 str
@@ -72,16 +72,16 @@ register
 login
 ---
     URL:
-        /api/v1.0/login?email=&password=&identity=&device=
+        /api/v1.0/login?username=&password=&identity=&device=
     method:
         get
     parameters:
-        email
+        username
         password
         identity
         device: default 0, 0 for Android, 1 for iOS
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "username": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
             "followers_count": ""}}
             
@@ -90,7 +90,7 @@ login
         user: a dict of user's info
             user_id: int
             nickname: unicode
-            email: str
+            username: str
             identity: str
             golds: 金币 int
             avatar: 头像 str
@@ -118,7 +118,7 @@ third_party_login
         avatar: 头像的url
         device: default 0, 0 for Android, 1 for iOS
     json:
-        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "email": "", "identity": "",
+        {"status": 0, "message": "success", "user": {"user_id": "", "nickname": "", "username": "", "identity": "",
             "golds": "", "avatar": "", "signature": "", "push": "", "disturb": "", "sex": "", "followings_count": "",
             "followers_count": ""}}
             
@@ -127,7 +127,7 @@ third_party_login
         user: a dict of user's info
             user_id: int
             nickname: unicode
-            email: str
+            username: str
             identity: str
             golds: 金币 int
             avatar: 头像 str
