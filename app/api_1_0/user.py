@@ -59,7 +59,6 @@ def register():
     elif email and password and identity:
         nickname = User.generate_nickname()
         user = User(
-            id=User.get_random_id(),
             password=password,
             email=email,
             identity=identity,
@@ -115,17 +114,18 @@ def third_party_login():
         third_party_user = ThirdPartyUser.query.filter_by(society_id=society_id, society_user_id=society_user_id). \
             limit(1).first()
         if not third_party_user:
-            user_id = User.get_random_id()
             user = User(
-                id=user_id,
                 identity=identity,
                 nickname=nickname,
                 password='',
                 email='',
                 sex=sex,
-                avatar=get_image_from_url(user_id, avatar),
+                avatar='',
                 device=device
             )
+            db.session.add(user)
+            db.session.commit()
+            user.avatar = get_image_from_url(user.id, avatar)
             db.session.add(user)
             third_party_user = ThirdPartyUser(
                 user_id=user.id,
