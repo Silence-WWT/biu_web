@@ -63,13 +63,6 @@ class User(UserMixin, db.Model):
     device = db.Column(db.SmallInteger, default=0, nullable=False)
 
     @staticmethod
-    def get_random_id():
-        while 1:
-            random_id = randint(10000000, 99999999)
-            if not User.query.get(random_id):
-                return random_id
-
-    @staticmethod
     def generate_nickname():
         while 1:
             nickname = 'biu_%d' % randint(10000000, 99999999)
