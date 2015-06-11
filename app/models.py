@@ -46,7 +46,7 @@ class UnifiedUser(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Unicode(15), nullable=False)
+    username = db.Column(db.Unicode(15), default=u'', nullable=False)
     nickname = db.Column(db.Unicode(15), default=u'', nullable=False)
     password_hash = db.Column('password', db.String(128), nullable=False)
     salt = db.Column(db.String(128), nullable=False)
