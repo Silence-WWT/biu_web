@@ -3,8 +3,8 @@ SUCCESS_MSG = 'success'
 
 LOGIN_FAIL = 1000
 LOGIN_FAIL_MSG = 'login fail, wrong username or password'
-EMAIL_EXIST = 1001
-EMAIL_EXIST_MSG = 'email exist'
+USERNAME_EXIST = 1001
+USERNAME_EXIST_MSG = 'username exist'
 USER_NOT_EXIST = 1002
 USER_NOT_EXIST_MSG = 'user not exist'
 USER_GOLDS_NOT_ENOUGH = 1003
